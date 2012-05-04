@@ -14,4 +14,8 @@ public class ConnectionMessage  extends Message {
 		super(fromUsername);
 		this.type = type;
 	}
+	
+	public String getStringMessage() {
+		return "Use protocol, but this is a connection message with type" + type;
+	}
 }

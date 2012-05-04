@@ -11,4 +11,8 @@ public class RequestMessage extends ToMessage {
 	public RequestMessage(String fromUsername, String toUsername) {
 		super(fromUsername, toUsername);
 	}
+	
+	public String getStringMessage() {
+		return "Use protocol, but this is a request message with fromUsername" + fromUsername;
+	}
 }

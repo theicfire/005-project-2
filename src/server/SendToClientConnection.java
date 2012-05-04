@@ -63,13 +63,8 @@ public class SendToClientConnection extends Thread {
         		if (isKilled) {
         			break;
         		}
-        		if (message instanceof Message) {
-	        		System.out.println("got queue message: " + message);
-	        		out.println(message);
-        		} else {
-        			System.out.println("got request from: " + message.getFromUsername());
-        		}
-//        		String output = handleRequest(message);
+        		
+        		handleRequest(message, out);
         	}
         } finally {     
         	System.out.println("send connection closed");
@@ -82,7 +77,7 @@ public class SendToClientConnection extends Thread {
 	 * @param input
 	 * @return
 	 */
-	private static String handleRequest(Message message) {
-		return "";
+	private static void handleRequest(Message message, PrintWriter out) {
+		out.println(message.getStringMessage());
 	}
 }

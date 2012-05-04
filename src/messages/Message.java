@@ -5,8 +5,8 @@ import java.sql.Timestamp;
 import Utils.Utils;
 
 public abstract class Message {
-	private String fromUsername;
-	private Timestamp timestamp;
+	protected String fromUsername;
+	protected Timestamp timestamp;
 	
 	public Message(String fromUsername, Timestamp timestamp) {
 		this.fromUsername = fromUsername;
@@ -29,5 +29,6 @@ public abstract class Message {
 	public void setTimestamp(Timestamp timestamp) {
 		this.timestamp = timestamp;
 	}
+	public abstract String getStringMessage();
 
 }

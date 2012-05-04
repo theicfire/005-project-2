@@ -2,8 +2,8 @@ package messages;
 
 import java.sql.Timestamp;
 
-public class ToMessage extends Message {
-	private String toUsername;
+public abstract class ToMessage extends Message {
+	protected String toUsername;
 	public ToMessage(String fromUsername, String toUsername,
 			Timestamp timestamp) {
 		super(fromUsername, timestamp);
@@ -21,4 +21,6 @@ public class ToMessage extends Message {
 	public void setToUsername(String toUsername) {
 		this.toUsername = toUsername;
 	}
+	
+	public abstract String getStringMessage();
 }

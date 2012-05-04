@@ -24,6 +24,10 @@ public class TextMessage extends ToMessage {
 	public void setText(String text) {
 		this.text = text;
 	}
+	
+	public String getStringMessage() {
+		return "Use protocol, but this is a text message with text" + text;
+	}
 
 	@Override
 	public String toString() {

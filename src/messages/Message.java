@@ -2,14 +2,20 @@ package messages;
 
 import java.sql.Timestamp;
 
+import Utils.Utils;
+
 public abstract class Message {
 	private String fromUsername;
 	private Timestamp timestamp;
 	
 	public Message(String fromUsername, Timestamp timestamp) {
-		super();
 		this.fromUsername = fromUsername;
 		this.timestamp = timestamp;
+	}
+	
+	public Message(String fromUsername) {
+		this.fromUsername = fromUsername;
+		this.timestamp = Utils.getCurrentTimestamp();
 	}
 	public String getFromUsername() {
 		return fromUsername;

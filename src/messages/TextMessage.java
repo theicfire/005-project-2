@@ -11,6 +11,11 @@ public class TextMessage extends ToMessage {
 		super(fromUsername, toUsername, timestamp);
 		this.text = text;
 	}
+	
+	public TextMessage(String fromUsername, String toUsername, String text) {
+		super(fromUsername, toUsername);
+		this.text = text;
+	}
 
 	public String getText() {
 		return text;

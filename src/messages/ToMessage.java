@@ -9,6 +9,10 @@ public class ToMessage extends Message {
 		super(fromUsername, timestamp);
 		this.toUsername = toUsername;
 	}
+	public ToMessage(String fromUsername, String toUsername) {
+		super(fromUsername);
+		this.toUsername = toUsername;
+	}
 	
 	public String getToUsername() {
 		return toUsername;

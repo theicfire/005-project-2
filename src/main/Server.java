@@ -23,12 +23,12 @@ import server.SendToClientConnection;
 public class Server {
 
 	private final static int PORT = 4444;
-	private ServerSocket serverSocket;
+	private final ServerSocket serverSocket;
 	
 	// TODO think about what static is going to be doing
 	private static ConcurrentHashMap<String, ArrayBlockingQueue<Message>> messages
 		= new ConcurrentHashMap<String, ArrayBlockingQueue<Message>>();
-	private static HashMap<String, SendToClientConnection> sendThreadPool;
+	private static ConcurrentHashMap<String, SendToClientConnection> sendThreadPool;
 	private final static int MAX_CLIENTS = 1000;
 	
 	/**
@@ -37,7 +37,7 @@ public class Server {
 	 */
 	public Server(int port) throws IOException {
 		serverSocket = new ServerSocket(port);
-		sendThreadPool = new HashMap<String, SendToClientConnection>();
+		sendThreadPool = new ConcurrentHashMap<String, SendToClientConnection>();
 	}
 
 	/**
@@ -62,15 +62,18 @@ public class Server {
 	
 	// TODO; I don't think this should be in the server
 	public static void sendMsgToClient(ToMessage msg) {
-		ArrayBlockingQueue<Message> queue = messages.get(msg.getToUsername());
-		System.out.println(messages.keySet());
-		System.out.println(msg);
-		System.out.println(queue);
-		try {
-			queue.offer(msg);
-		} catch (Exception e) {
-			// queue is probably null
-			System.out.println("Client does not exist");
+		// needed because we are first getting something form messages and then editing that thing
+		synchronized(messages) {
+			ArrayBlockingQueue<Message> queue = messages.get(msg.getToUsername());
+			System.out.println(messages.keySet());
+			System.out.println(msg);
+			System.out.println(queue);
+			try {
+				queue.offer(msg);
+			} catch (Exception e) {
+				// queue is probably null
+				System.out.println("Client does not exist");
+			}
 		}
 	}
 	
@@ -78,10 +81,13 @@ public class Server {
 	public static boolean connect(String username, Socket socket) {
 		// make a message queue for this client
 		ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(MAX_CLIENTS);
-		if (messages.containsKey(username)) {
-			return false; // same username
+		// Needed, otherwise we may add multiple of the same username
+		synchronized(messages) {
+			if (messages.containsKey(username)) {
+				return false; // same username
+			}
+			messages.put(username, queue);
 		}
-		messages.put(username, queue);
 		
 		// make a new thread to be able to send stuff to the client
 		SendToClientConnection thread = new SendToClientConnection(socket, queue);
@@ -91,6 +97,8 @@ public class Server {
 		// tell everyone that this user has now connected
 	    sendAll(new ConnectionMessage(username, Utils.Utils.getCurrentTimestamp(), 
         		ConnectionMessage.types.CONNECT));
+	    
+	    giveAllConnections(username);
 	    return true;
 	}
 	
@@ -106,6 +114,31 @@ public class Server {
         		ConnectionMessage.types.DISCONNECT));
 	}
 	
+	/**
+	 * Go send the given username all the connection messages that are needed to show all the people online
+	 * @param username
+	 */
+	private static void giveAllConnections(String username) {
+		ArrayBlockingQueue<Message> queue = messages.get(username);
+		if (queue == null) {
+			throw new RuntimeException("Queue is null; this should never happen!");
+		}
+		Iterator<Entry<String, ArrayBlockingQueue<Message>>> it = messages.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<String, ArrayBlockingQueue<Message>> pair = 
+	        		(Map.Entry<String, ArrayBlockingQueue<Message>>)it.next();
+
+	        // tell this user ever username except it's own
+	        if (! pair.getKey().equals(username)) {
+	        	queue.offer(new ConnectionMessage(pair.getKey(), ConnectionMessage.types.CONNECT));
+	        }
+	    }
+	}
+	
+	/**
+	 * Send everyone except the sender the message
+	 * @param msg
+	 */
 	private static void sendAll(Message msg) {
 		Iterator<Entry<String, ArrayBlockingQueue<Message>>> it = messages.entrySet().iterator();
 	    while (it.hasNext()) {
@@ -120,7 +153,7 @@ public class Server {
 	}
 
 	/**
-	 * Start a MinesweeperServer running on the default port.
+	 * Start a ChatServer running on the default port.
 	 */
 	public static void main(String[] args) {
 		try {

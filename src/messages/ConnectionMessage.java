@@ -9,4 +9,9 @@ public class ConnectionMessage  extends Message {
 		super(fromUsername, timestamp);
 		this.type = type;
 	}
+	
+	public ConnectionMessage(String fromUsername, ConnectionMessage.types type) {
+		super(fromUsername);
+		this.type = type;
+	}
 }

@@ -8,4 +8,7 @@ public class RequestMessage extends ToMessage {
 			Timestamp timestamp) {
 		super(fromUsername, toUsername, timestamp);
 	}
+	public RequestMessage(String fromUsername, String toUsername) {
+		super(fromUsername, toUsername);
+	}
 }

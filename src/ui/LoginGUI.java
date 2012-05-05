@@ -12,6 +12,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import main.Client;
+
 /**
  * This is the GUI that plays Jotto.
  */
@@ -73,7 +75,8 @@ public class LoginGUI extends JFrame {
 	private void login(String username) {
 		System.out.println("loggging in with " + username);
 //		makePopup();
-		makeDialog();
+//		makeDialog();
+		new Client(username);
 	}
 
 	public static void makePopup() {

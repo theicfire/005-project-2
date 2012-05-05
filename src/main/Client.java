@@ -4,10 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.swing.SwingUtilities;
+
+import ui.BuddyList;
+import ui.LoginGUI;
 
 import messages.*;
 import client.*;
@@ -23,28 +29,54 @@ public class Client {
 	private String username;
 	private static BuddyList buddyList;
 	
-	public Client(){
+	public Client(String username) { // TODO Bad for 005 yo!
 		//Make a login screen, which for now will just print it out, but will eventually call .login(String username)
 		// For now....
-		login("tschultz");
+
+		this.username = username;
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		// prompt the user to enter their name
+		Socket socket;
+		try {
+			socket = new Socket("localhost", 4444);
+			// probably won't use this variable; everything happens inside of the thread
+			
+			ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(1000);
+			SendToServerConnection sender = new SendToServerConnection(socket, queue, username);
+			sender.start();
+			ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(socket, username);
+			receiver.start();
+
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public void login(String username){
-		this.username = username;
-		buddyList = new BuddyList(username);
+	public static void login(String username){
+        buddyList = new BuddyList(username);
+        buddyList.setVisible(true); 
 	}
+	
 	
 	
 	/* Handles connection messages by calling loggedIn/loggedOut.
 	 */
 	public static void handleConnectionMessage(ConnectionMessage message) {
-		if (message.type == ConnectionMessage.types.CONNECT){
-			buddyList.buddyLogin(message.getFromUsername());
-			
-		} else if (message.type == ConnectionMessage.types.DISCONNECT){
-			buddyList.buddyLogout(message.getFromUsername());
+		try{
+			if (message.type == ConnectionMessage.types.CONNECT){
+				buddyList.buddyLogin(message.getFromUsername());
+				
+			} else if (message.type == ConnectionMessage.types.DISCONNECT){
+				buddyList.buddyLogout(message.getFromUsername());
+			}
+			updateOnline();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		updateOnline();
 	}
 	
 
@@ -94,20 +126,11 @@ public class Client {
 	 * Start a GUI chat client.
 	 */
 	public static void main(String[] args) throws IOException {
-		Client c = new Client();
-//		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//		// prompt the user to enter their name
-//		Socket socket = new Socket("localhost", 4444);
-//		// probably won't use this variable; everything happens inside of the thread
-//		ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(socket);
-//		receiver.start();
-//		ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(1000);
-//		SendToClientConnection sender = new SendToClientConnection(socket, queue);
-//		sender.start();
-//
-//		for (String line = br.readLine(); line != null; line = br.readLine()) {
-//			System.out.println("Given line: " + line);
-//			queue.offer(new TextMessage("chase", "tim", "hey tim!")); // this sends to the sender because the objects are shared
-//		}
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				LoginGUI main = new LoginGUI();
+				main.setVisible(true);
+			}
+		});
 	}
 }

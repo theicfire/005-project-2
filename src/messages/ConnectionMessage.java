@@ -27,9 +27,10 @@ public class ConnectionMessage  extends Message {
 		Matcher matcher = pattern.matcher(input);
 		if(matcher.matches()){
 			matcher.group();
+			System.out.println(matcher.group(1));
 			return new ConnectionMessage(matcher.group(2),
 										 Timestamp.valueOf(matcher.group(3)),
-										 matcher.group(1) == "CONNECT" ? types.CONNECT : types.DISCONNECT);
+										 matcher.group(1).equals("CONNECT") ? types.CONNECT : types.DISCONNECT);
 		}
 		throw new Exception("Invalid ConnectionMessage string: " + input);
 	}
@@ -48,5 +49,10 @@ public class ConnectionMessage  extends Message {
 				+ getClass() + ", hashCode()=" + hashCode() + ", toString()="
 				+ super.toString() + "]";
 	}
-	
+	public static void main(String[] args) throws Exception{
+		ConnectionMessage connectionMessage = new ConnectionMessage("from",types.CONNECT);
+		System.out.println(connectionMessage.toString());
+		System.out.println(connectionMessage.getStringMessage());
+		System.out.println(parseStringMessage(connectionMessage.getStringMessage()).toString());
+	}
 }

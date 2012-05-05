@@ -57,14 +57,14 @@ public class ReceiveFromClientConnection extends Thread {
     private void handleConnection(Socket socket) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        out.println("Welcome to the chat server. Please enter your username");
         try {
         	for (String line = in.readLine(); line != null; line = in.readLine()) {
         		if (username == null) {
         			if (Server.connect(line, socket)) {
-        				username = line;	
+        				username = line;
+        				out.println("GOOD_LOGIN");
         			} else {
-        				out.println("Name already taken; please choose a different name");
+        				out.println("DUPLICATE_LOGIN");
         			}
         		} else {
 	        		System.out.println("reading line" + line);

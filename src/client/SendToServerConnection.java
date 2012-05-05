@@ -22,10 +22,12 @@ public class SendToServerConnection extends Thread {
 	private Socket gSocket;
 	ArrayBlockingQueue<Message> queue;
 	private boolean isKilled = false;
-	public SendToServerConnection(Socket socket, ArrayBlockingQueue<Message> queue) {
+	private String username;
+	public SendToServerConnection(Socket socket, ArrayBlockingQueue<Message> queue, String username) {
 		System.out.println("Making sendToServer obj");
 		gSocket = socket;
 		this.queue = queue;
+		this.username = username;
 	}
 	public void kill() {
 		isKilled = true;
@@ -57,6 +59,8 @@ public class SendToServerConnection extends Thread {
     private void handleConnection(Socket socket) throws IOException, InterruptedException {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);        
         try {
+        	// initial login passing to server
+        	out.println(username);
         	for (Message message = queue.take(); message != null; message = queue.take()) {
         		if (isKilled) {
         			break;

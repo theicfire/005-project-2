@@ -22,7 +22,8 @@ public class ReceiveFromServerConnection extends Thread {
 
 	private Socket gSocket;
 	public String username;
-	public ReceiveFromServerConnection(Socket socket) {
+	public ReceiveFromServerConnection(Socket socket, String username) {
+		this.username = username;
 		System.out.println("make new obj");
 		gSocket = socket;
 	}
@@ -39,8 +40,6 @@ public class ReceiveFromServerConnection extends Thread {
             try {
             	System.out.println("actually closing here");
 				gSocket.close();
-				
-				Server.disconnect(username);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -55,19 +54,10 @@ public class ReceiveFromServerConnection extends Thread {
     private void handleConnection(Socket socket) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        out.println("Welcome to the chat server. Please enter your username");
         try {
         	for (String line = in.readLine(); line != null; line = in.readLine()) {
-        		if (username == null) {
-        			if (Server.connect(line, socket)) {
-        				username = line;	
-        			} else {
-        				out.println("Name already taken; please choose a different name");
-        			}
-        		} else {
-	        		System.out.println("reading line" + line);
-	        		handleRequest(line);
-        		}
+        		System.out.println("ReceiveFromServer line input: " + line);
+        		handleRequest(line);
         	}
         } finally {     
         	System.out.println("connection closed");
@@ -85,6 +75,7 @@ public class ReceiveFromServerConnection extends Thread {
 	private void handleRequest(String input) throws Exception {
 		if (ConnectionMessage.isConnectionMessage(input)){
 			ConnectionMessage message = ConnectionMessage.parseStringMessage(input);
+			System.out.println(message.getStringMessage());
 			Client.handleConnectionMessage(message);
 		} else if (RequestMessage.isRequestMessage(input)){
 			RequestMessage message =  RequestMessage.parseStringMessage(input);
@@ -92,6 +83,11 @@ public class ReceiveFromServerConnection extends Thread {
 		} else if (TextMessage.isTextMessage(input)){
 			TextMessage message =  TextMessage.parseStringMessage(input);
 			Client.handleTextMessage(message);
+		} else if (input.equals("DUPLICATE_LOGIN")) {
+			System.out.println("duplicate!!");
+		} else if (input.equals("GOOD_LOGIN")) {
+			// call login
+			Client.login(username);
 		}
 	}
 	

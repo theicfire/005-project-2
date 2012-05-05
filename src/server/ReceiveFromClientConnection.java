@@ -68,7 +68,11 @@ public class ReceiveFromClientConnection extends Thread {
         			}
         		} else {
 	        		System.out.println("reading line" + line);
-	        		handleRequest(line);
+	        		try {
+						handleRequest(line);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
         		}
         	}
         } finally {     
@@ -83,29 +87,13 @@ public class ReceiveFromClientConnection extends Thread {
 	 * @param input
 	 * @return
 	 */
-	private void handleRequest(String input) {
-		if (input.indexOf(" ") == -1) {
-			throw new RuntimeException("Not valid"); // TODO be better than this in error checking
-		}
-		String start = input.split(" ")[0];
+	private void handleRequest(String input) throws Exception {
 		// MSG TO_NAME MESSAGE
-		String patternStr = "MSG ([^ ]*) (.+)";
-		Pattern pattern = Pattern.compile(patternStr);
-		Matcher matcher = pattern.matcher(input);
-		if (matcher.matches()) {
-			System.out.println("found!!!");
-			matcher.group();
-			System.out.println("matcher: " + Utils.getCurrentTimestamp());
-			Server.sendMsgToClient(new TextMessage(username, matcher.group(1), Utils.getCurrentTimestamp(), matcher.group(2)));
+		if (TextMessage.isTextMessage(input)) {
+			Server.sendMsgToClient(TextMessage.parseStringMessage(input));
 			return;
-		}
-		
-		patternStr = "REQUEST ([^ ]*)";
-		pattern = Pattern.compile(patternStr);
-		matcher = pattern.matcher(input);
-		if (matcher.matches()) {
-			Server.sendMsgToClient(new RequestMessage(username, matcher.group(1), Utils.getCurrentTimestamp()));
-//			Server.sendMsgToClient
+		} else if (RequestMessage.isRequestMessage(input)) {
+			Server.sendMsgToClient(RequestMessage.parseStringMessage(input));
 			return;
 		}
 	}

@@ -3,24 +3,16 @@ package ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.Random;
-import java.util.regex.Pattern;
 
-import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.swing.table.DefaultTableModel;
 
 public class convoGui extends JFrame {
 

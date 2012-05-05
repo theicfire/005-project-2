@@ -8,6 +8,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import main.Client;
+import messages.RequestMessage;
+
 public class BuddyList extends JFrame implements ListSelectionListener, ActionListener {
 	//http://docs.oracle.com/javase/tutorial/uiswing/examples/components/ListDemoProject/src/components/ListDemo.java
 	
@@ -17,10 +20,12 @@ public class BuddyList extends JFrame implements ListSelectionListener, ActionLi
     private JTextField partnerName;
     private static final String requestString = "Request";
     private JButton requestButton;
+    private String username;
 
 	private static List<String> online = new ArrayList<String>();
 	
 	public BuddyList(String username) {
+		this.username = username;
 	    listModel = new DefaultListModel();
 	
 	    //Create the list and put it in a scroll pane.
@@ -104,9 +109,14 @@ public class BuddyList extends JFrame implements ListSelectionListener, ActionLi
 		
 	}
 	
-	public void request(String username){
-		System.out.println("Chat request sent for: " + username);
-		// TODO
+	public void request(String toUsername){
+		System.out.println("Chat request sent for: " + toUsername);
+		ConvoGUI convoGUI = new ConvoGUI(username, toUsername);
+		convoGUI.setVisible(true);
+
+    	Client.getChats().put(toUsername, convoGUI);
+		Client.getQueue().offer(new RequestMessage(username, toUsername));
+		// now send a request message to the other user
 	}
 	
 	public static void main(String args[]) {

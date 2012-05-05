@@ -11,8 +11,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import ui.BuddyList;
+import ui.ConvoGUI;
 import ui.LoginGUI;
 
 import messages.*;
@@ -24,10 +26,11 @@ import client.ReceiveFromServerConnection;
  * GUI chat client runner.
  */
 public class Client {
-	private static ConcurrentHashMap<String, ArrayBlockingQueue<Message>> chats
-		= new ConcurrentHashMap<String, ArrayBlockingQueue<Message>>();
+	private static ConcurrentHashMap<String, ConvoGUI> chats
+		= new ConcurrentHashMap<String, ConvoGUI>();
 	private String username;
 	private static BuddyList buddyList;
+	private static ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(1000);
 	
 	public Client(String username) { // TODO Bad for 005 yo!
 		//Make a login screen, which for now will just print it out, but will eventually call .login(String username)
@@ -40,8 +43,6 @@ public class Client {
 		try {
 			socket = new Socket("localhost", 4444);
 			// probably won't use this variable; everything happens inside of the thread
-			
-			ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(1000);
 			SendToServerConnection sender = new SendToServerConnection(socket, queue, username);
 			sender.start();
 			ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(socket, username);
@@ -84,17 +85,13 @@ public class Client {
 	 * If the request is accepted, it loggedIn/loggedOut.
 	 */
 	public static void handleRequestMessage(final RequestMessage message) {
-		new Thread(new Runnable() {
-            public void run() {
-                if(!chats.containsKey(message.getFromUsername()) && acceptRequest(message)){
-                	ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(0);
-                	chats.put(message.getFromUsername(),queue);
-                	//Open up a new chat window!
-                	ChatWindow chatWindow = new ChatWindow(message.getToUsername(), message.getFromUsername(),queue);
-                }
-                //Need to remove users from chats when they stop talking - TODO
-            }
-        }, "Chat Request from " + message.getFromUsername()).start();
+        if(!chats.containsKey(message.getFromUsername()) && acceptRequest(message)){
+        	ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(100);
+        	//Open up a new chat window!
+        	ConvoGUI convoGUI = new ConvoGUI(message.getToUsername(), message.getFromUsername());
+        	chats.put(message.getFromUsername(),convoGUI);
+        	convoGUI.setVisible(true);
+        }
 	}
 	
 	/* Handles Text messages by forwarding them to the proper ArrayBlockingQueue
@@ -102,7 +99,9 @@ public class Client {
 	 */
 	public static void handleTextMessage(TextMessage message) throws Exception {
 		try{
-			chats.get(message.getFromUsername()).offer(message);
+			System.out.println("looking for : " + message.getFromUsername());
+			System.out.println("found: " + chats.get(message.getFromUsername()));
+			chats.get(message.getFromUsername()).enterText(message.getText());
 		} catch (NullPointerException e) {
 			throw new Exception("handleTextMessage: message received from person not connected to");
 		}
@@ -125,12 +124,21 @@ public class Client {
 	/**
 	 * Start a GUI chat client.
 	 */
+	
+	public static ArrayBlockingQueue<Message> getQueue(){
+		return queue;
+	}
 	public static void main(String[] args) throws IOException {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				LoginGUI main = new LoginGUI();
-				main.setVisible(true);
+//				LoginGUI main = new LoginGUI();
+//				main.setVisible(true);
+				new Client("thomas" + (int)(Math.random() * 100));
 			}
 		});
+	}
+
+	public static ConcurrentHashMap<String, ConvoGUI> getChats() {
+		return chats;
 	}
 }

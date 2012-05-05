@@ -38,7 +38,7 @@ public class SendToServerConnection extends Thread {
         } catch (InterruptedException e) {
         	e.printStackTrace(); // but don't terminate serve()
         } finally {
-        	System.out.println("connection really closed");
+        	System.out.println("SendToServerConnection closed");
             try {
             	System.out.println("actually closing here");
 				gSocket.close();

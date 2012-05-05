@@ -35,7 +35,7 @@ public class ReceiveFromServerConnection extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-        	System.out.println("connection really closed");
+        	System.out.println("ReceiveFromServerConnection closed");
             try {
             	System.out.println("actually closing here");
 				gSocket.close();

@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import messages.*;
 import client.*;
 
-import server.SendToClientConnection;
 import client.ReceiveFromServerConnection;
 
 /**
@@ -85,7 +84,7 @@ public class Client {
 		return true;
 	}
 	
-/**
+	/**
 	 * Start a GUI chat client.
 	 */
 	public static void main(String[] args) throws IOException {
@@ -96,7 +95,7 @@ public class Client {
 		ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(socket);
 		receiver.start();
 		ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(1000);
-		SendToClientConnection sender = new SendToClientConnection(socket, queue);
+		SendToServerConnection sender = new SendToServerConnection(socket, queue);
 		sender.start();
 
 		for (String line = br.readLine(); line != null; line = br.readLine()) {

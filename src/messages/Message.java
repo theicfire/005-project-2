@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import Utils.Utils;
 
 public abstract class Message {
+	public static String patternStr = ""; //TODO
 	protected String fromUsername;
 	protected Timestamp timestamp;
 	
@@ -30,5 +31,4 @@ public abstract class Message {
 		this.timestamp = timestamp;
 	}
 	public abstract String getStringMessage();
-
 }

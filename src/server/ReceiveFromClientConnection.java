@@ -84,6 +84,10 @@ public class ReceiveFromClientConnection extends Thread {
 	 * @return
 	 */
 	private void handleRequest(String input) {
+		if (input.indexOf(" ") == -1) {
+			throw new RuntimeException("Not valid"); // TODO be better than this in error checking
+		}
+		String start = input.split(" ")[0];
 		// MSG TO_NAME MESSAGE
 		String patternStr = "MSG ([^ ]*) (.+)";
 		Pattern pattern = Pattern.compile(patternStr);
@@ -101,6 +105,7 @@ public class ReceiveFromClientConnection extends Thread {
 		matcher = pattern.matcher(input);
 		if (matcher.matches()) {
 			Server.sendMsgToClient(new RequestMessage(username, matcher.group(1), Utils.getCurrentTimestamp()));
+//			Server.sendMsgToClient
 			return;
 		}
 	}

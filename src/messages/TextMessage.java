@@ -1,9 +1,11 @@
 package messages;
 
 import java.sql.Timestamp;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TextMessage extends ToMessage {
-
+	public static String patternStr = "MSG\\|([^\\|]*)\\|([^\\|]*)\\|([^\\|]*)\\|(.+)";
 	private String text;
 
 	public TextMessage(String fromUsername, String toUsername,
@@ -26,9 +28,22 @@ public class TextMessage extends ToMessage {
 	}
 	
 	public String getStringMessage() {
-		return "Use protocol, but this is a text message with text" + text;
+		return "MSG|" + fromUsername + "|" + toUsername + "|" + timestamp.toString() + "|" + text;
 	}
 
+	public static TextMessage parseStringMessage(String input) throws Exception {
+		Pattern pattern = Pattern.compile(patternStr);
+		Matcher matcher = pattern.matcher(input);
+		if(matcher.matches()){
+			matcher.group();
+			return new TextMessage(matcher.group(1),
+								   matcher.group(2),
+								   Timestamp.valueOf(matcher.group(3)),
+								   matcher.group(4));
+		}
+		throw new Exception("Invalid TextMessage string: " + input);
+	}
+	
 	@Override
 	public String toString() {
 		return "TextMessage [text=" + text + ", getText()=" + getText()
@@ -39,7 +54,15 @@ public class TextMessage extends ToMessage {
 				+ super.toString() + "]";
 	}
 	
+	public static boolean isTextMessage(String input){
+		Pattern pattern = Pattern.compile(patternStr);
+		Matcher matcher = pattern.matcher(input);
+		return matcher.matches();
+	}
 	
-	
-
+	public static void main(String[] args) throws Exception{
+		TextMessage textMessage = new TextMessage("from","to","text");
+		System.out.println(textMessage.toString());
+		System.out.println(parseStringMessage(textMessage.getStringMessage()).toString());
+	}
 }

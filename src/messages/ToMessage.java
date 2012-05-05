@@ -3,6 +3,7 @@ package messages;
 import java.sql.Timestamp;
 
 public abstract class ToMessage extends Message {
+	public static String patternStr = ""; //TODO
 	protected String toUsername;
 	public ToMessage(String fromUsername, String toUsername,
 			Timestamp timestamp) {

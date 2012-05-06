@@ -27,6 +27,7 @@ public class ConvoGUI extends JFrame {
 	private JScrollPane scrollPane;
 	private String toUsername;
 	private String fromUsername;
+	private boolean otherText = false; // true if the other person has sent some text
 	
 	public ConvoGUI(String fromUsername, String toUsername) {
 		this.fromUsername = fromUsername;
@@ -71,9 +72,13 @@ public class ConvoGUI extends JFrame {
 	
 	public void enterText(String text) {
 		convo.append(toUsername + ": "+ text + newline);
+		if (!otherText) {
+			this.setVisible(true);
+			otherText = true;
+		}
 		System.out.println(fromUsername + "|" + toUsername + " just sent a message (enterText)");
 	}
-
+	
 	public void createAndShowGUI() {
 
 		GroupLayout layout = new GroupLayout(getContentPane());
@@ -115,6 +120,10 @@ public class ConvoGUI extends JFrame {
 
 			}
 		});
+	}
+	
+	public boolean hasOtherText() {
+		return otherText;
 	}
 
 }

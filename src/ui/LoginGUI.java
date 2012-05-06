@@ -76,6 +76,8 @@ public class LoginGUI extends JFrame {
 		System.out.println("loggging in with " + username);
 //		makePopup();
 //		makeDialog();
+		// TODO close
+		this.dispose();
 		new Client(username);
 	}
 
@@ -88,19 +90,6 @@ public class LoginGUI extends JFrame {
 
 		frame.setSize(350, 250);
 		frame.setVisible(true);
-	}
-
-	public void makeDialog() {
-		Object[] options = { "Yes, please", "No, thanks"};
-		int n = JOptionPane.showOptionDialog(this,
-				"Connect with this user?",
-				"Chat Request", JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-		if (n == 1 || n == -1) {
-			System.out.println("The user hit the second option or hit exit");
-		} else {
-			System.out.println("The user hit the first option");
-		}
 	}
 
 	public static void main(final String[] args) {

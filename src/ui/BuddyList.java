@@ -115,7 +115,7 @@ public class BuddyList extends JFrame implements ListSelectionListener, ActionLi
 		convoGUI.setVisible(true);
 
     	Client.getChats().put(toUsername, convoGUI);
-		Client.getQueue().offer(new RequestMessage(username, toUsername));
+		Client.getQueue().offer(new RequestMessage(username, toUsername, RequestMessage.types.REQUEST));
 		// now send a request message to the other user
 	}
 	

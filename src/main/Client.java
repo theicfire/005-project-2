@@ -15,6 +15,7 @@ import javax.swing.UIManager;
 
 import ui.BuddyList;
 import ui.ConvoGUI;
+import ui.DialogGUI;
 import ui.LoginGUI;
 
 import messages.*;
@@ -26,14 +27,15 @@ import client.ReceiveFromServerConnection;
  * GUI chat client runner.
  */
 public class Client {
-	private static ConcurrentHashMap<String, ConvoGUI> chats
-		= new ConcurrentHashMap<String, ConvoGUI>();
+	private static ConcurrentHashMap<String, ConvoGUI> chats = new ConcurrentHashMap<String, ConvoGUI>();
 	private String username;
 	private static BuddyList buddyList;
-	private static ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(1000);
-	
+	private static ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(
+			1000);
+
 	public Client(String username) { // TODO Bad for 005 yo!
-		//Make a login screen, which for now will just print it out, but will eventually call .login(String username)
+		// Make a login screen, which for now will just print it out, but will
+		// eventually call .login(String username)
 		// For now....
 
 		this.username = username;
@@ -42,10 +44,13 @@ public class Client {
 		Socket socket;
 		try {
 			socket = new Socket("localhost", 4444);
-			// probably won't use this variable; everything happens inside of the thread
-			SendToServerConnection sender = new SendToServerConnection(socket, queue, username);
+			// probably won't use this variable; everything happens inside of
+			// the thread
+			SendToServerConnection sender = new SendToServerConnection(socket,
+					queue, username);
 			sender.start();
-			ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(socket, username);
+			ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(
+					socket, username);
 			receiver.start();
 
 		} catch (UnknownHostException e) {
@@ -56,22 +61,21 @@ public class Client {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void login(String username){
-        buddyList = new BuddyList(username);
-        buddyList.setVisible(true); 
+
+	public static void login(String username) {
+		buddyList = new BuddyList(username);
+		buddyList.setVisible(true);
 	}
-	
-	
-	
-	/* Handles connection messages by calling loggedIn/loggedOut.
+
+	/*
+	 * Handles connection messages by calling loggedIn/loggedOut.
 	 */
 	public static void handleConnectionMessage(ConnectionMessage message) {
-		try{
-			if (message.type == ConnectionMessage.types.CONNECT){
+		try {
+			if (message.type == ConnectionMessage.types.CONNECT) {
 				buddyList.buddyLogin(message.getFromUsername());
-				
-			} else if (message.type == ConnectionMessage.types.DISCONNECT){
+
+			} else if (message.type == ConnectionMessage.types.DISCONNECT) {
 				buddyList.buddyLogout(message.getFromUsername());
 			}
 			updateOnline();
@@ -79,61 +83,88 @@ public class Client {
 			e.printStackTrace();
 		}
 	}
-	
 
-	/* Handles Request messages by calling acceptRequest.
-	 * If the request is accepted, it loggedIn/loggedOut.
+	/*
+	 * Handles Request messages by calling acceptRequest. If the request is
+	 * accepted, it loggedIn/loggedOut.
 	 */
 	public static void handleRequestMessage(final RequestMessage message) {
-        if(!chats.containsKey(message.getFromUsername()) && acceptRequest(message)){
-        	ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(100);
-        	//Open up a new chat window!
-        	ConvoGUI convoGUI = new ConvoGUI(message.getToUsername(), message.getFromUsername());
-        	chats.put(message.getFromUsername(),convoGUI);
-        	convoGUI.setVisible(true);
-        }
+		if (!chats.containsKey(message.getFromUsername())) {
+			if (message.type == RequestMessage.types.REQUEST) {
+				if (acceptRequest(message)) {
+					// ArrayBlockingQueue<Message> queue = new
+					// ArrayBlockingQueue<Message>(100);
+					// Open up a new chat window!
+					ConvoGUI convoGUI = new ConvoGUI(message.getToUsername(),
+							message.getFromUsername());
+					chats.put(message.getFromUsername(), convoGUI);
+//					convoGUI.setVisible(true); // will be set to true when other person talks first
+				} else {
+					// send the requester that you have rejected them
+					// we are switching the order of from/to on purpose to send the message back
+					Client.getQueue().offer(
+							new RequestMessage(message.getToUsername(), message.getFromUsername(),
+									RequestMessage.types.REJECT_REQUEST));
+				}
+			} else {
+				// you have requested someone to chat but they rejected you :(
+				// TODO
+				chats.get(message.getFromUsername()).dispose();
+			}
+		}
 	}
-	
-	/* Handles Text messages by forwarding them to the proper ArrayBlockingQueue
-	 * Throws an exception if you receive a message for which you do not currently have a chat open.
+
+	/*
+	 * Handles Text messages by forwarding them to the proper ArrayBlockingQueue
+	 * Throws an exception if you receive a message for which you do not
+	 * currently have a chat open.
 	 */
 	public static void handleTextMessage(TextMessage message) throws Exception {
-		try{
+		try {
 			System.out.println("looking for : " + message.getFromUsername());
-			System.out.println("found: " + chats.get(message.getFromUsername()));
+			System.out
+					.println("found: " + chats.get(message.getFromUsername()));
 			chats.get(message.getFromUsername()).enterText(message.getText());
 		} catch (NullPointerException e) {
-			throw new Exception("handleTextMessage: message received from person not connected to");
+			throw new Exception(
+					"handleTextMessage: message received from person not connected to");
 		}
 	}
 
 	private static void updateOnline() {
 		// TODO Auto-generated method stub
 	}
-	
-	/* Called by handleRequestMessage, when a user requests to start a chat, and a REQUEST
-	 * is sent to the client from the server. Opens up a popup window seeing if they want to
-	 * accept the chat?... Up do you, Sebastian - TODO
+
+	/*
+	 * Called by handleRequestMessage, when a user requests to start a chat, and
+	 * a REQUEST is sent to the client from the server. Opens up a popup window
+	 * seeing if they want to accept the chat?... Up do you, Sebastian - TODO
+	 * 
 	 * @returns true if the user wishes to accept the chat, and false otherwise.
 	 */
-	public static boolean acceptRequest(RequestMessage message){
-		//TODO: Make a pop-up window?...
-		return true;
+	public static boolean acceptRequest(RequestMessage message) {
+		// This makes a popup dialog; disable for now
+		if (true) {
+			return true;
+		}
+		DialogGUI dialog = new DialogGUI();
+		return dialog.makeDialog();
 	}
-	
+
 	/**
 	 * Start a GUI chat client.
 	 */
-	
-	public static ArrayBlockingQueue<Message> getQueue(){
+
+	public static ArrayBlockingQueue<Message> getQueue() {
 		return queue;
 	}
+
 	public static void main(String[] args) throws IOException {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-//				LoginGUI main = new LoginGUI();
-//				main.setVisible(true);
-				new Client("thomas" + (int)(Math.random() * 100));
+				LoginGUI main = new LoginGUI();
+				main.setVisible(true);
+//				new Client("thomas" + (int) (Math.random() * 100));
 			}
 		});
 	}

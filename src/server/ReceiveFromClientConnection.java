@@ -26,7 +26,7 @@ import messages.*;
 public class ReceiveFromClientConnection extends Thread {
 
 	private Socket gSocket;
-	public String username;
+	private String username;
 	public ReceiveFromClientConnection(Socket socket) {
 		System.out.println("make new obj");
 		gSocket = socket;

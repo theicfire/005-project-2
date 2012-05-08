@@ -25,20 +25,28 @@ public class LoginGUI extends JFrame {
 	private JButton loginButton;
 	private JTextField username;
 	private JLabel teamPicLabel;
-
+	private JTextField port;
+	private JTextField host;
+	
 	// holds all the "guessing" threads. This is necessary because
 	// each GuessThread has a kill method that needs to be called when a new
 	// puzzle is made.
 
-	public LoginGUI() throws IOException {
+	public LoginGUI() {
 		super("Login");
 		loginButton = new JButton();
 		loginButton.setName("loginButton");
 		loginButton.setText("Login");
 		username = new JTextField(20);
 		username.setName("username");
+		port = new JTextField(20);
+		port.setText("4444");
+		host = new JTextField(20);
+		host.setText("localhost");
 
-		JLabel usernameLabel = new JLabel("Type a username:");
+		JLabel usernameLabel = new JLabel("Username:");
+		JLabel portLabel = new JLabel("Port:");
+		JLabel hostLabel = new JLabel("Host:");
 				
 		
 		java.net.URL imageURL = LoginGUI.class.getResource("teamPhoto.png");
@@ -62,7 +70,14 @@ public class LoginGUI extends JFrame {
 						.addComponent(teamPicLabel))
 				.addGroup(layout.createSequentialGroup()
 						.addComponent(usernameLabel).addComponent(username)
-						.addComponent(loginButton)));
+						.addComponent(loginButton))
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(hostLabel)
+					.addComponent(host))
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(portLabel)
+					.addComponent(port))
+				);
 				
 		layout.setVerticalGroup(layout
 				.createSequentialGroup()
@@ -70,23 +85,28 @@ public class LoginGUI extends JFrame {
 						.addComponent(teamPicLabel))
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(usernameLabel).addComponent(username)
-						.addComponent(loginButton)));
+						.addComponent(loginButton))
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(hostLabel)
+						.addComponent(host))
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(portLabel)
+						.addComponent(port))
+				);
 
 
 		
 		// Listeners
-		username.addActionListener(new ActionListener() {
+		ActionListener loginAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				login(username.getText());
 			}
-		});
-		loginButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("clicking login");
-				login(username.getText());
-			}
-		});
-
+		};
+		
+		username.addActionListener(loginAction);
+		loginButton.addActionListener(loginAction);
+		host.addActionListener(loginAction);
+		port.addActionListener(loginAction);
 		// size the frame
 		this.pack();
 	}
@@ -101,8 +121,12 @@ public class LoginGUI extends JFrame {
 //		makePopup();
 //		makeDialog();
 		// TODO close
-		this.dispose();
-		new Client(username);
+		try {
+			new Client(username, host.getText(), port.getText());
+			this.dispose();
+		} catch (Exception e) {
+			// TODO throw up some visual error message
+		}
 	}
 
 	public static void makePopup() {
@@ -136,7 +160,7 @@ public class LoginGUI extends JFrame {
 					main = new LoginGUI();
 					main.setVisible(true);
 
-				} catch (IOException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

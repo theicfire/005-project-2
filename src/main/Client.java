@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -33,33 +34,26 @@ public class Client {
 	private static ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(
 			1000);
 
-	public Client(String username) { // TODO Bad for 005 yo!
+	public Client(String username, String host, String port) throws UnknownHostException, IOException { // TODO Bad for 005 yo!
 		// Make a login screen, which for now will just print it out, but will
 		// eventually call .login(String username)
 		// For now....
 
+		int portNum = Integer.parseInt(port);
+		
 		this.username = username;
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		// prompt the user to enter their name
 		Socket socket;
-		try {
-			socket = new Socket("localhost", 4444);
-			// probably won't use this variable; everything happens inside of
-			// the thread
-			SendToServerConnection sender = new SendToServerConnection(socket,
-					queue, username);
-			sender.start();
-			ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(
-					socket, username);
-			receiver.start();
-
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		socket = new Socket(host, portNum);
+		// probably won't use this variable; everything happens inside of
+		// the thread
+		SendToServerConnection sender = new SendToServerConnection(socket,
+				queue, username);
+		sender.start();
+		ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(
+				socket, username);
+		receiver.start();
 	}
 
 	public static void login(String username) {

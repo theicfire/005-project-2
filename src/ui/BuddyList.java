@@ -16,7 +16,7 @@ public class BuddyList extends JFrame implements ListSelectionListener, ActionLi
 	
 	private JList list;
     private DefaultListModel listModel;
-
+    private JLabel pugLabelA;
     private JTextField partnerName;
     private static final String requestString = "Request";
     private JButton requestButton;
@@ -27,6 +27,12 @@ public class BuddyList extends JFrame implements ListSelectionListener, ActionLi
 	public BuddyList(String username) {
 		this.username = username;
 	    listModel = new DefaultListModel();
+	    
+	    
+		java.net.URL imageURLa = LoginGUI.class.getResource("img/pugA.jpeg");
+		ImageIcon pugPicA = new ImageIcon(imageURLa);
+		pugLabelA = new JLabel(pugPicA);
+
 	
 	    //Create the list and put it in a scroll pane.
 	    list = new JList(listModel);
@@ -65,13 +71,18 @@ public class BuddyList extends JFrame implements ListSelectionListener, ActionLi
 	    	        .addComponent(listScrollPane)
 	    	        .addGroup(layout.createSequentialGroup()
 	    	            .addComponent(partnerName)
-	    	            .addComponent(requestButton))));
+	    	            .addComponent(requestButton)))
+	    	    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+	    	    	.addComponent(pugLabelA)));
 	    
-	    layout.setVerticalGroup(layout.createSequentialGroup()
+	    
+	    layout.setVerticalGroup(layout.createParallelGroup()
+	    		.addGroup(layout.createSequentialGroup()
     	        .addComponent(listScrollPane)
 	    	    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 	    	        .addComponent(partnerName)
-	    	        .addComponent(requestButton)));
+	    	        .addComponent(requestButton)))
+	    	    .addComponent(pugLabelA));
 	    
         setTitle("Logged in as: " + username);
         pack();

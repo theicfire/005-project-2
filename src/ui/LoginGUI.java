@@ -49,7 +49,7 @@ public class LoginGUI extends JFrame {
 		JLabel hostLabel = new JLabel("Host:");
 				
 		
-		java.net.URL imageURL = LoginGUI.class.getResource("teamPhoto.png");
+		java.net.URL imageURL = LoginGUI.class.getResource("img/teamPhoto.png");
 		ImageIcon teamPic = new ImageIcon(imageURL);
 		teamPicLabel = new JLabel(teamPic);
 

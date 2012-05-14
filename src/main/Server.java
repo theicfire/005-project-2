@@ -85,12 +85,14 @@ public class Server {
 		synchronized(messages) {
 			ArrayList<String> clients = chatRooms.get(msg.getRoomID());
 			for(String client:clients){
-				ArrayBlockingQueue<Message> queue = messages.get(client);
-				try {
-					queue.offer(msg);
-				} catch (Exception e) {
-					// queue is probably null
-					System.out.println("Client does not exist");
+				if(!msg.getFromUsername().equals(client)){
+					ArrayBlockingQueue<Message> queue = messages.get(client);
+					try {
+						queue.offer(msg);
+					} catch (Exception e) {
+						// queue is probably null
+						System.out.println("Client does not exist");
+					}
 				}
 			}
 		}

@@ -92,7 +92,6 @@ public class ReceiveFromClientConnection extends Thread {
 		// MSG TO_NAME MESSAGE
 		if (TextMessage.isTextMessage(input)) {
 			TextMessage msg = TextMessage.parseStringMessage(input);
-			System.out.println("TEST"+msg.getRoomID());
 			if(Server.getChatRooms().containsKey(msg.getRoomID()))
 				Server.sendMsgToClients(TextMessage.parseStringMessage(input));
 			else
@@ -100,12 +99,16 @@ public class ReceiveFromClientConnection extends Thread {
 			return;
 		} else if (RequestMessage.isRequestMessage(input)) {
 			RequestMessage msg = RequestMessage.parseStringMessage(input);
-			ArrayList<String> clients = new ArrayList<String>();
-			clients.add(msg.getFromUsername());
-			clients.add(msg.getToUsername());
-			System.out.println("TEST"+msg.getRoomID());
-			Server.getChatRooms().put(msg.getRoomID(), clients);
-			Server.sendMsgToClient(msg);
+			if(Server.getChatRooms().containsKey(msg.getRoomID())){
+				Server.getChatRooms().get(msg.getRoomID()).add(msg.getToUsername());
+				Server.sendMsgToClient(msg);
+			} else {
+				ArrayList<String> clients = new ArrayList<String>();
+				clients.add(msg.getFromUsername());
+				clients.add(msg.getToUsername());
+				Server.getChatRooms().put(msg.getRoomID(), clients);
+				Server.sendMsgToClient(msg);
+			}
 			return;
 		} else if (TypingMessage.isTypingMessage(input)) {
 			TypingMessage msg = TypingMessage.parseStringMessage(input);

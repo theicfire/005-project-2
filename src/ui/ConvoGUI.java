@@ -137,6 +137,18 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 		setTitle(baseTitle + message.toTitle());
 	}
 	private void enterTextFromField(){
+		String text = newText.getText();
+		if(text.equals(""))
+			return;
+		if(text.startsWith("/add ")){
+			String toUsername = text.substring(5);
+			Client.getQueue().offer(new RequestMessage(fromUsername, toUsername, roomID, RequestMessage.types.REQUEST));
+			newText.setText("");
+			
+			//TODO - this is retarded
+			Client.getQueue().offer(new TextMessage(fromUsername, roomID, "I added " + toUsername + " to the chat!"));
+			return;
+		}
 		String toAdd = fromUsername + ": "+ newText.getText() + newline;
 		convo.append(toAdd);
 		Client.getQueue().offer(new TextMessage(fromUsername, roomID, newText.getText()));

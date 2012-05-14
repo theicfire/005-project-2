@@ -3,6 +3,8 @@ package ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -19,8 +21,9 @@ import javax.swing.WindowConstants;
 import main.Client;
 import messages.RequestMessage;
 import messages.TextMessage;
+import messages.TypingMessage;
 
-public class ConvoGUI extends JFrame {
+public class ConvoGUI extends JFrame implements KeyListener  {
 
 //	private JLabel friendIs;
 	private JLabel status; // TODO: update whether typing, idle, etc!!!
@@ -29,14 +32,21 @@ public class ConvoGUI extends JFrame {
 	private JTextField newText;
 	private final static String newline = "\n";
 	private JScrollPane scrollPane;
-	private String toUsername;
+
+	private int roomID;
 	private String fromUsername;
 	private JLabel pugLabel;
+	
+	private String baseTitle;
 	private boolean otherText = false; // true if the other person has sent some text
 	
-	public ConvoGUI(String fromUsername, String toUsername) {
+	public long lastKeyPress; 
+	
+	public ConvoGUI(String fromUsername, int roomID) {
 		this.fromUsername = fromUsername;
-		this.toUsername = toUsername;
+		this.baseTitle = "Room " + roomID;
+		this.roomID = roomID;
+		
 		enter = new JButton("Enter");
 		enter.setName("Enter");
 		enter.addActionListener(new ActionListener() {
@@ -54,6 +64,7 @@ public class ConvoGUI extends JFrame {
 
 		newText = new JTextField();
 		newText.setName("newText");
+        newText.addKeyListener(this);
 		newText.addActionListener(new ActionListener() {
 
 			@Override
@@ -61,7 +72,9 @@ public class ConvoGUI extends JFrame {
 				enterTextFromField();
 			}
 		});
-
+		
+		lastKeyPress = System.currentTimeMillis();
+		
 		convo = new JTextArea();
 		convo.setName("Convo");
 		convo.setEditable(false);
@@ -80,20 +93,63 @@ public class ConvoGUI extends JFrame {
 		
 	}
 	
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if(e.getKeyCode() == 10){
+	        Client.getQueue().offer(new TypingMessage(fromUsername, roomID, TypingMessage.types.NOTHING));
+			return;
+		}
+    	new Thread(new Runnable(){
+    		public void run(){
+    			if(System.currentTimeMillis()-lastKeyPress > 1000)
+   					Client.getQueue().offer(new TypingMessage(fromUsername,	roomID,	TypingMessage.types.TYPING));
+    			
+    			lastKeyPress = System.currentTimeMillis();
+    			
+    			try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+    		
+    			if(System.currentTimeMillis()-lastKeyPress > 900)
+    				Client.getQueue().offer(new TypingMessage(fromUsername,
+    														  roomID,
+    														  newText.getText().equals("") ? TypingMessage.types.NOTHING : 
+    															  							 TypingMessage.types.ENTERED));
+    		}
+    	}).start();
+    }
+
+	public void setStatus(TypingMessage message) {
+		setTitle(baseTitle + message.toTitle());
+	}
 	private void enterTextFromField(){
 		String toAdd = fromUsername + ": "+ newText.getText() + newline;
 		convo.append(toAdd);
-		Client.getQueue().offer(new TextMessage(fromUsername, toUsername, newText.getText()));
+		Client.getQueue().offer(new TextMessage(fromUsername, roomID, newText.getText()));
 		newText.setText("");
 	}
-	
-	public void enterText(String text) {
-		convo.append(toUsername + ": "+ text + newline);
-		if (!otherText) {
+
+	public void handleTextMessage(TextMessage message) {
+		convo.append(message.getFromUsername() + ": " + message.getText() + newline);
+		if(!otherText) {
 			this.setVisible(true);
 			otherText = true;
 		}
-		System.out.println(fromUsername + "|" + toUsername + " just sent a message (enterText)");
+		System.out.println(message.getFromUsername() + "|" + message.getText() + " just sent a message (enterText)");
 	}
 	
 	public void createAndShowGUI() {
@@ -130,7 +186,7 @@ public class ConvoGUI extends JFrame {
 		layout.linkSize(SwingConstants.HORIZONTAL, status, pugLabel);
 		layout.linkSize(SwingConstants.VERTICAL, newText, enter);
 
-		setTitle("Talk to " + toUsername);
+		setTitle(baseTitle);
 		pack();
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -141,7 +197,7 @@ public class ConvoGUI extends JFrame {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 
-				ConvoGUI main = new ConvoGUI("chase", "bob");
+				ConvoGUI main = new ConvoGUI("chase", 0);
 
 				main.setVisible(true);
 

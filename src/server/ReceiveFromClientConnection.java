@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,10 +91,26 @@ public class ReceiveFromClientConnection extends Thread {
 	private void handleRequest(String input) throws Exception {
 		// MSG TO_NAME MESSAGE
 		if (TextMessage.isTextMessage(input)) {
-			Server.sendMsgToClient(TextMessage.parseStringMessage(input));
+			TextMessage msg = TextMessage.parseStringMessage(input);
+			System.out.println("TEST"+msg.getRoomID());
+			if(Server.getChatRooms().containsKey(msg.getRoomID()))
+				Server.sendMsgToClients(TypingMessage.parseStringMessage(input));
+			else
+				System.out.println("Shouldn't reach here... textMessage, but no chatRoom");
 			return;
 		} else if (RequestMessage.isRequestMessage(input)) {
-			Server.sendMsgToClient(RequestMessage.parseStringMessage(input));
+			RequestMessage msg = RequestMessage.parseStringMessage(input);
+			ArrayList<String> clients = new ArrayList<String>();
+			clients.add(msg.getFromUsername());
+			clients.add(msg.getToUsername());
+			System.out.println("TEST"+msg.getRoomID());
+			Server.getChatRooms().put(msg.getRoomID(), clients);
+			Server.sendMsgToClient(msg);
+			return;
+		} else if (TypingMessage.isTypingMessage(input)) {
+			TypingMessage msg = TypingMessage.parseStringMessage(input);
+			if(Server.getChatRooms().containsKey(msg.getRoomID()))
+				Server.sendMsgToClients(TypingMessage.parseStringMessage(input));
 			return;
 		}
 	}

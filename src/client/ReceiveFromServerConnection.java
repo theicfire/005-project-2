@@ -83,6 +83,10 @@ public class ReceiveFromServerConnection extends Thread {
 		} else if (TextMessage.isTextMessage(input)){
 			TextMessage message =  TextMessage.parseStringMessage(input);
 			Client.handleTextMessage(message);
+		} else if (TypingMessage.isTypingMessage(input)){
+			System.out.println(input);
+			TypingMessage message =  TypingMessage.parseStringMessage(input);
+			Client.handleTypingMessage(message);
 		} else if (input.equals("DUPLICATE_LOGIN")) {
 			System.out.println("duplicate!!");
 		} else if (input.equals("GOOD_LOGIN")) {

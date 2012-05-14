@@ -3,6 +3,7 @@ package main;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class Server {
 	private static ConcurrentHashMap<String, ArrayBlockingQueue<Message>> messages
 		= new ConcurrentHashMap<String, ArrayBlockingQueue<Message>>();
 	private static ConcurrentHashMap<String, SendToClientConnection> sendThreadPool;
+	private static ConcurrentHashMap<Integer, ArrayList<String>> chatRooms
+		= new ConcurrentHashMap<Integer, ArrayList<String>>();
 	private final static int MAX_CLIENTS = 1000;
 	
 	/**
@@ -73,6 +76,22 @@ public class Server {
 			} catch (Exception e) {
 				// queue is probably null
 				System.out.println("Client does not exist");
+			}
+		}
+	}	
+	
+	// TODO; I don't think this should be in the server
+	public static void sendMsgToClients(ToMessage msg) {
+		synchronized(messages) {
+			ArrayList<String> clients = chatRooms.get(msg.getRoomID());
+			for(String client:clients){
+				ArrayBlockingQueue<Message> queue = messages.get(client);
+				try {
+					queue.offer(msg);
+				} catch (Exception e) {
+					// queue is probably null
+					System.out.println("Client does not exist");
+				}
 			}
 		}
 	}
@@ -163,5 +182,9 @@ public class Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static ConcurrentHashMap<Integer,ArrayList<String>> getChatRooms() {
+		return chatRooms;
 	}
 }

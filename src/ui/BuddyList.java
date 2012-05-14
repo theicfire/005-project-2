@@ -2,6 +2,7 @@ package ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -23,6 +24,7 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 	private static final String requestString = "Request";
 	private JButton requestButton;
 	private String username;
+	private Random random;
 
 	private static List<String> online = new ArrayList<String>();
 
@@ -62,6 +64,8 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 		setPreferredSize(new Dimension(510, 410));
 
 		createAndShowGUI();
+		
+		random = new Random();
 
 	}
 
@@ -147,12 +151,14 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 	public void request(String toUsername) {
 		System.out.println("Chat request sent for: " + toUsername);
 		if (online.contains(toUsername)) { //only start convo if buddy logged in
-			ConvoGUI convoGUI = new ConvoGUI(username, toUsername);
+			//TODO - LOL SO JANKY
+			int randomInt = Math.abs(random.nextInt(999999));
+			ConvoGUI convoGUI = new ConvoGUI(username, randomInt);
 			convoGUI.setVisible(true);
 
-			Client.getChats().put(toUsername, convoGUI);
+			Client.getChats().put(randomInt, convoGUI);
 			Client.getQueue().offer(
-					new RequestMessage(username, toUsername,
+					new RequestMessage(username, toUsername, randomInt,
 							RequestMessage.types.REQUEST));
 			// now send a request message to the other user
 		}

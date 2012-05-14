@@ -8,14 +8,14 @@ public class TextMessage extends ToMessage {
 	public static String patternStr = "MSG\\|([^\\|]*)\\|([^\\|]*)\\|([^\\|]*)\\|(.+)";
 	private String text;
 
-	public TextMessage(String fromUsername, String toUsername,
+	public TextMessage(String fromUsername, int roomID,
 			Timestamp timestamp, String text) {
-		super(fromUsername, toUsername, timestamp);
+		super(fromUsername, roomID, timestamp);
 		this.text = text;
 	}
 	
-	public TextMessage(String fromUsername, String toUsername, String text) {
-		super(fromUsername, toUsername);
+	public TextMessage(String fromUsername, int roomID, String text) {
+		super(fromUsername, roomID);
 		this.text = text;
 	}
 
@@ -28,7 +28,7 @@ public class TextMessage extends ToMessage {
 	}
 	
 	public String getStringMessage() {
-		return "MSG|" + fromUsername + "|" + toUsername + "|" + timestamp.toString() + "|" + text;
+		return "MSG|" + fromUsername + "|" + roomID + "|" + timestamp.toString() + "|" + text;
 	}
 
 	public static TextMessage parseStringMessage(String input) throws Exception {
@@ -37,7 +37,7 @@ public class TextMessage extends ToMessage {
 		if(matcher.matches()){
 			matcher.group();
 			return new TextMessage(matcher.group(1),
-								   matcher.group(2),
+								   Integer.parseInt(matcher.group(2)),
 								   Timestamp.valueOf(matcher.group(3)),
 								   matcher.group(4));
 		}
@@ -47,7 +47,7 @@ public class TextMessage extends ToMessage {
 	@Override
 	public String toString() {
 		return "TextMessage [text=" + text + ", getText()=" + getText()
-				+ ", getToUsername()=" + getToUsername()
+				+ ", getRoomID()=" + getRoomID()
 				+ ", getFromUsername()=" + getFromUsername()
 				+ ", getTimestamp()=" + getTimestamp() + ", getClass()="
 				+ getClass() + ", hashCode()=" + hashCode() + ", toString()="
@@ -61,7 +61,7 @@ public class TextMessage extends ToMessage {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		TextMessage textMessage = new TextMessage("from","to","text");
+		TextMessage textMessage = new TextMessage("from",0,"text");
 		System.out.println(textMessage.toString());
 		System.out.println(parseStringMessage(textMessage.getStringMessage()).toString());
 	}

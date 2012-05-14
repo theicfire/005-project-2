@@ -28,7 +28,7 @@ import client.ReceiveFromServerConnection;
  * GUI chat client runner.
  */
 public class Client {
-	private static ConcurrentHashMap<String, ConvoGUI> chats = new ConcurrentHashMap<String, ConvoGUI>();
+	private static ConcurrentHashMap<Integer, ConvoGUI> chats = new ConcurrentHashMap<Integer, ConvoGUI>();
 	private String username;
 	private static BuddyList buddyList;
 	private static ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(
@@ -83,27 +83,26 @@ public class Client {
 	 * accepted, it loggedIn/loggedOut.
 	 */
 	public static void handleRequestMessage(final RequestMessage message) {
-		if (!chats.containsKey(message.getFromUsername())) {
+		if (!chats.containsKey(message.getRoomID())){
 			if (message.type == RequestMessage.types.REQUEST) {
 				if (acceptRequest(message)) {
 					// ArrayBlockingQueue<Message> queue = new
 					// ArrayBlockingQueue<Message>(100);
 					// Open up a new chat window!
-					ConvoGUI convoGUI = new ConvoGUI(message.getToUsername(),
-							message.getFromUsername());
-					chats.put(message.getFromUsername(), convoGUI);
+					ConvoGUI convoGUI = new ConvoGUI(message.getToUsername(), message.getRoomID());
+					chats.put(message.getRoomID(),convoGUI);
 //					convoGUI.setVisible(true); // will be set to true when other person talks first
 				} else {
 					// send the requester that you have rejected them
 					// we are switching the order of from/to on purpose to send the message back
 					Client.getQueue().offer(
-							new RequestMessage(message.getToUsername(), message.getFromUsername(),
+							new RequestMessage(message.getToUsername(), message.getFromUsername(), message.getRoomID(),
 									RequestMessage.types.REJECT_REQUEST));
 				}
 			} else {
 				// you have requested someone to chat but they rejected you :(
 				// TODO
-				chats.get(message.getFromUsername()).dispose();
+				chats.get(message.getRoomID()).dispose();
 			}
 		}
 	}
@@ -115,16 +114,29 @@ public class Client {
 	 */
 	public static void handleTextMessage(TextMessage message) throws Exception {
 		try {
-			System.out.println("looking for : " + message.getFromUsername());
-			System.out
-					.println("found: " + chats.get(message.getFromUsername()));
-			chats.get(message.getFromUsername()).enterText(message.getText());
+			System.out.println("looking for : " + message.getRoomID());
+			System.out.println("found: " + chats.get(message.getRoomID()));
+			chats.get(message.getRoomID()).handleTextMessage(message);
 		} catch (NullPointerException e) {
 			throw new Exception(
 					"handleTextMessage: message received from person not connected to");
 		}
 	}
-
+	
+	/*
+	 * TODO - write shit
+	 */
+	public static void handleTypingMessage(TypingMessage message) throws Exception {
+		try {
+			System.out.println("looking for : " + message.getFromUsername());
+			System.out.println("found: " + chats.get(message.getRoomID()));
+			chats.get(message.getRoomID()).setStatus(message);
+		} catch (NullPointerException e) {
+			throw new Exception(
+					"handleTypingMessage: message received from person not connected to");
+		}
+	}
+	
 	private static void updateOnline() {
 		// TODO Auto-generated method stub
 	}
@@ -163,7 +175,7 @@ public class Client {
 		});
 	}
 
-	public static ConcurrentHashMap<String, ConvoGUI> getChats() {
+	public static ConcurrentHashMap<Integer, ConvoGUI> getChats() {
 		return chats;
 	}
 }

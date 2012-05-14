@@ -5,22 +5,29 @@ import java.sql.Timestamp;
 public abstract class ToMessage extends Message {
 	public static String patternStr = ""; //TODO
 	protected String toUsername;
-	public ToMessage(String fromUsername, String toUsername,
+	protected int roomID;
+	
+	public ToMessage(String fromUsername, int roomID,
 			Timestamp timestamp) {
 		super(fromUsername, timestamp);
-		this.toUsername = toUsername;
+		this.roomID = roomID;
 	}
-	public ToMessage(String fromUsername, String toUsername) {
+	public ToMessage(String fromUsername, int roomID) {
 		super(fromUsername);
-		this.toUsername = toUsername;
+		this.roomID = roomID;
 	}
+	
 	
 	public String getToUsername() {
 		return toUsername;
 	}
+	
+	public int getRoomID() {
+		return roomID;
+	}
 
-	public void setToUsername(String toUsername) {
-		this.toUsername = toUsername;
+	public void setRoomID(int roomID) {
+		this.roomID = roomID;
 	}
 	
 	public abstract String getStringMessage();

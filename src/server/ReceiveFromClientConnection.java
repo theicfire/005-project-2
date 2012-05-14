@@ -94,7 +94,7 @@ public class ReceiveFromClientConnection extends Thread {
 			TextMessage msg = TextMessage.parseStringMessage(input);
 			System.out.println("TEST"+msg.getRoomID());
 			if(Server.getChatRooms().containsKey(msg.getRoomID()))
-				Server.sendMsgToClients(TypingMessage.parseStringMessage(input));
+				Server.sendMsgToClients(TextMessage.parseStringMessage(input));
 			else
 				System.out.println("Shouldn't reach here... textMessage, but no chatRoom");
 			return;

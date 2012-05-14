@@ -10,12 +10,12 @@ public class TextMessage extends ToMessage {
 
 	public TextMessage(String fromUsername, int roomID,
 			Timestamp timestamp, String text) {
-		super(fromUsername, roomID, timestamp);
+		super(fromUsername, "", roomID, timestamp);
 		this.text = text;
 	}
 	
 	public TextMessage(String fromUsername, int roomID, String text) {
-		super(fromUsername, roomID);
+		super(fromUsername, "", roomID);
 		this.text = text;
 	}
 

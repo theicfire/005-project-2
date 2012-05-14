@@ -7,19 +7,28 @@ public abstract class ToMessage extends Message {
 	protected String toUsername;
 	protected int roomID;
 	
-	public ToMessage(String fromUsername, int roomID,
+	public ToMessage(String fromUsername, String toUsername, int roomID,
 			Timestamp timestamp) {
 		super(fromUsername, timestamp);
 		this.roomID = roomID;
+		this.toUsername = toUsername;
 	}
-	public ToMessage(String fromUsername, int roomID) {
+	public ToMessage(String fromUsername, String toUsername, int roomID) {
 		super(fromUsername);
 		this.roomID = roomID;
+		this.toUsername = toUsername;
 	}
 	
-	
+
+	public String getStringMessageSuffix(){
+		return "|" + fromUsername + "|" + toUsername + "|" + roomID + "|" + timestamp.toString();
+	}
 	public String getToUsername() {
 		return toUsername;
+	}
+	
+	public void setToUsername(String toUsername) {
+		this.toUsername = toUsername;
 	}
 	
 	public int getRoomID() {

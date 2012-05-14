@@ -10,12 +10,12 @@ public class TypingMessage extends ToMessage {
 	public TypingMessage.types type;
 	
 	public TypingMessage(String fromUsername, int roomID, Timestamp timestamp, TypingMessage.types type) {
-		super(fromUsername, roomID, timestamp);
+		super(fromUsername, "", roomID, timestamp);
 		this.type = type;
 	}
 	
 	public TypingMessage(String fromUsername, int roomID, TypingMessage.types type) {
-		super(fromUsername, roomID);
+		super(fromUsername, "", roomID);
 		this.type = type;
 	}
 	

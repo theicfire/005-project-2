@@ -13,16 +13,16 @@ public class RequestMessage extends ToMessage {
 	}
 	public RequestMessage(String fromUsername, String toUsername, int roomID, RequestMessage.types type,
 			Timestamp timestamp) {
-		super(fromUsername, roomID, timestamp);
+		super(fromUsername, toUsername, roomID, timestamp);
 		this.type = type;
 	}
 	public RequestMessage(String fromUsername, String toUsername, int roomID, RequestMessage.types type) {
-		super(fromUsername, roomID);
+		super(fromUsername, toUsername, roomID);
 		this.type = type;
 	}
 	
 	public String getStringMessage() {
-		return ((type == types.REQUEST) ? "REQUEST" : "RECEST") + "|" + fromUsername + "|" + roomID + "|" + timestamp.toString();
+		return ((type == types.REQUEST) ? "REQUEST" : "REJECT") + super.getStringMessageSuffix();
 	}
 	
 	public static RequestMessage parseStringMessage(String input) throws Exception {

@@ -5,8 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -20,6 +22,8 @@ import messages.TextMessage;
 
 public class ConvoGUI extends JFrame {
 
+//	private JLabel friendIs;
+	private JLabel status; // TODO: update whether typing, idle, etc!!!
 	private JTextArea convo;
 	private JButton enter;
 	private JTextField newText;
@@ -27,6 +31,7 @@ public class ConvoGUI extends JFrame {
 	private JScrollPane scrollPane;
 	private String toUsername;
 	private String fromUsername;
+	private JLabel pugLabel;
 	private boolean otherText = false; // true if the other person has sent some text
 	
 	public ConvoGUI(String fromUsername, String toUsername) {
@@ -41,6 +46,11 @@ public class ConvoGUI extends JFrame {
 				enterTextFromField();
 			}
 		});
+		
+		java.net.URL imageURL = LoginGUI.class.getResource("img/pugCslice.png");
+		ImageIcon pugPic = new ImageIcon(imageURL);
+		pugLabel = new JLabel(pugPic);
+
 
 		newText = new JTextField();
 		newText.setName("newText");
@@ -57,8 +67,15 @@ public class ConvoGUI extends JFrame {
 		convo.setEditable(false);
         scrollPane = new JScrollPane(convo);
 
+        status = new JLabel("Is Idle");  // TODO: update whether typing, idle, etc!!!
+        status.setName("Status");
+        
+        /*
+        friendIs = new JLabel(" "+fromUsername+":");
+        friendIs.setName("friendIs");
+*/
 
-		setPreferredSize(new Dimension(450, 350));
+		setPreferredSize(new Dimension(450, 450));
 		createAndShowGUI();
 		
 	}
@@ -87,20 +104,30 @@ public class ConvoGUI extends JFrame {
 		layout.setAutoCreateContainerGaps(true);
 
 		layout.setHorizontalGroup(layout
-				.createParallelGroup()
-				.addGroup(layout.createSequentialGroup().addComponent(scrollPane))
-				.addGroup(
-						layout.createSequentialGroup().addComponent(newText)
-								.addComponent(enter)));
+				.createSequentialGroup()
+					.addGroup(layout.createParallelGroup()
+							//.addComponent(friendIs)
+							.addComponent(status)
+							.addComponent(pugLabel))
+					.addGroup(layout.createParallelGroup()
+								.addGroup(layout.createSequentialGroup().addComponent(scrollPane))
+								.addGroup(
+										layout.createSequentialGroup().addComponent(newText)
+										.addComponent(enter))));
 
 		layout.setVerticalGroup(layout
-				.createSequentialGroup()
-				.addGroup(layout.createParallelGroup().addComponent(scrollPane))
-				.addGroup(
-						layout.createParallelGroup().addComponent(newText)
-								.addComponent(enter)));
+				.createParallelGroup()
+				.addGroup(layout.createSequentialGroup()
+						//.addComponent(friendIs)
+						.addComponent(status)
+						.addComponent(pugLabel))
+				.addGroup(layout.createSequentialGroup()
+							.addGroup(layout.createParallelGroup().addComponent(scrollPane))
+							.addGroup(
+									layout.createParallelGroup().addComponent(newText)
+									.addComponent(enter))));
 
-		// layout.linkSize(SwingConstants.HORIZONTAL, puzzleNumber, guessHere);
+		layout.linkSize(SwingConstants.HORIZONTAL, status, pugLabel);
 		layout.linkSize(SwingConstants.VERTICAL, newText, enter);
 
 		setTitle("Talk to " + toUsername);

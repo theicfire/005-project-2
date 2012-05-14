@@ -49,7 +49,7 @@ public class LoginGUI extends JFrame {
 		JLabel hostLabel = new JLabel("Host:");
 				
 		
-		java.net.URL imageURL = LoginGUI.class.getResource("teamPhoto.png");
+		java.net.URL imageURL = LoginGUI.class.getResource("img/teamPhotoPug.png");
 		ImageIcon teamPic = new ImageIcon(imageURL);
 		teamPicLabel = new JLabel(teamPic);
 
@@ -99,7 +99,10 @@ public class LoginGUI extends JFrame {
 		// Listeners
 		ActionListener loginAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				login(username.getText());
+				String userInp = username.getText();
+				String firstLetter = userInp.substring(0, 1);
+				String end = userInp.substring(1);
+				login(firstLetter.toUpperCase()+end);
 			}
 		};
 		

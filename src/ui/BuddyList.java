@@ -75,12 +75,9 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 
 	// This method is required by ListSelectionListener.
 	public void valueChanged(ListSelectionEvent e) {
-		if (e.getValueIsAdjusting() == false) {
+		if (e.getValueIsAdjusting() == false && e.getFirstIndex() >= 0 && e.getLastIndex() < listModel.size()) {
 			requestButton.setEnabled(true);
-			
-			Object element = listModel.getElementAt(list.getSelectedIndex());
-			if(element!=null)
-				partnerName.setText(element.toString());
+			partnerName.setText(listModel.getElementAt(list.getSelectedIndex()).toString());
 		}
 	}
 
@@ -144,6 +141,18 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 	public void buddyLogout(String fromUsername) {
 		if (online.contains(fromUsername)) {
 			int index = online.indexOf(fromUsername);
+	
+//			int selectedIndex = list.getSelectedIndex();
+//			if(selectedIndex>0) {
+//				String selectedUsername = listModel.get(list.getSelectedIndex()).toString();
+//				if(selectedUsername.equals(fromUsername)){
+//					list.clearSelection();
+//				} else {
+//					if(selectedIndex > listModel.indexOf(fromUsername))
+//						list.setSelectedIndex(selectedIndex-1);
+//				}
+//			}
+				
 			listModel.remove(index);
 			online.remove(index);
 			return;

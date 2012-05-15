@@ -77,8 +77,10 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getValueIsAdjusting() == false) {
 			requestButton.setEnabled(true);
-			partnerName.setText(listModel.getElementAt(list.getSelectedIndex())
-					.toString());
+			
+			Object element = listModel.getElementAt(list.getSelectedIndex());
+			if(element!=null)
+				partnerName.setText(element.toString());
 		}
 	}
 

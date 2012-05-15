@@ -4,6 +4,8 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -27,6 +29,7 @@ public class LoginGUI extends JFrame {
 	private JLabel teamPicLabel;
 	private JTextField port;
 	private JTextField host;
+	private final static Pattern VALID_USERNAME = Pattern.compile("[0-9a-zA-Z]{3,12}");
 	
 	// holds all the "guessing" threads. This is necessary because
 	// each GuessThread has a kill method that needs to be called when a new
@@ -122,15 +125,17 @@ public class LoginGUI extends JFrame {
 		String firstLetter = userInp.substring(0, 1);
 		String end = userInp.substring(1);
 		String newUsername = firstLetter.toUpperCase()+end;
-		
-		System.out.println("loggging in with " + newUsername);
-		try {
-			new Client(newUsername, host.getText(), port.getText());
-			this.dispose();
-		} catch (Exception e) {
-			System.out.println("could not login");
-//			makePopup();
-			showErrorPopup();
+		if (! VALID_USERNAME.matcher(newUsername).matches()) {
+			// bad login pattern
+			showErrorPopup("Please provide a username with only letters and numbers, between 3 and 12 characters.");
+		} else {
+			System.out.println("loggging in with " + newUsername);
+			try {
+				new Client(newUsername, host.getText(), port.getText());
+				this.dispose();
+			} catch (Exception e) {
+				showErrorPopup("Login did not work. Please check your inputs.");
+			}
 		}
 	}
 
@@ -145,9 +150,9 @@ public class LoginGUI extends JFrame {
 		frame.setVisible(true);
 	}
 	
-	public void showErrorPopup() {
+	public void showErrorPopup(String error) {
 		Object[] options = {"OK"};
-		JOptionPane.showOptionDialog(this, "Login did not work. Please check your inputs.",
+		JOptionPane.showOptionDialog(this, error,
 				"Error", JOptionPane.ERROR_MESSAGE,
 				JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 	}

@@ -11,7 +11,7 @@ public abstract class ToMessage extends Message {
 			Timestamp timestamp) {
 		super(fromUsername, timestamp);
 		this.roomID = roomID;
-		this.toUsername = toUsername;
+		this.toUsername = toUsername.toLowerCase();
 	}
 	public ToMessage(String fromUsername, String toUsername, int roomID) {
 		super(fromUsername);

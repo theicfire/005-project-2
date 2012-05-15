@@ -10,7 +10,7 @@ public abstract class Message {
 	protected Timestamp timestamp;
 	
 	public Message(String fromUsername, Timestamp timestamp) {
-		this.fromUsername = fromUsername;
+		this.fromUsername = fromUsername.toLowerCase();
 		this.timestamp = timestamp;
 	}
 	

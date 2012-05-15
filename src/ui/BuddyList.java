@@ -130,6 +130,7 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 		return online;
 	}
 	public void buddyLogin(String fromUsername) {
+		fromUsername = fromUsername.toLowerCase();
 		if (!online.contains(fromUsername)) {
 			listModel.addElement(fromUsername);
 			online.add(fromUsername);
@@ -140,6 +141,7 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 	}
 
 	public void buddyLogout(String fromUsername) {
+		fromUsername = fromUsername.toLowerCase();
 		if (online.contains(fromUsername)) {
 			int index = online.indexOf(fromUsername);
 	

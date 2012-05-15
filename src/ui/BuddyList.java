@@ -29,6 +29,7 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 	private static List<String> online = new ArrayList<String>();
 
 	public BuddyList(String username) {
+		this.setLocation((int) (Math.random() * 500), (int) (Math.random() * 500));
 		this.username = username;
 		listModel = new DefaultListModel();
 

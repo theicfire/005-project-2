@@ -178,6 +178,11 @@ public class Server {
 	 * Start a ChatServer running on the default port.
 	 */
 	public static void main(String[] args) {
+		runServer();
+	}
+	
+	public static void runServer() {
+		System.out.println("Starting server at " + PORT);
 		try {
 			Server server = new Server(PORT);
 			server.serve();

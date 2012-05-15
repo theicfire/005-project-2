@@ -34,6 +34,7 @@ public class LoginGUI extends JFrame {
 
 	public LoginGUI() {
 		super("Login");
+		this.setLocation((int) (Math.random() * 500), (int) (Math.random() * 500));
 		loginButton = new JButton();
 		loginButton.setName("loginButton");
 		loginButton.setText("Login");
@@ -99,10 +100,7 @@ public class LoginGUI extends JFrame {
 		// Listeners
 		ActionListener loginAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String userInp = username.getText();
-				String firstLetter = userInp.substring(0, 1);
-				String end = userInp.substring(1);
-				login(firstLetter.toUpperCase()+end);
+				login();
 			}
 		};
 		
@@ -119,16 +117,20 @@ public class LoginGUI extends JFrame {
 		g.drawImage(img, 0, 0, null);
 	}*/
 
-	private void login(String username) {
-		System.out.println("loggging in with " + username);
-//		makePopup();
-//		makeDialog();
-		// TODO close
+	private void login() {
+		String userInp = username.getText();
+		String firstLetter = userInp.substring(0, 1);
+		String end = userInp.substring(1);
+		String newUsername = firstLetter.toUpperCase()+end;
+		
+		System.out.println("loggging in with " + newUsername);
 		try {
-			new Client(username, host.getText(), port.getText());
+			new Client(newUsername, host.getText(), port.getText());
 			this.dispose();
 		} catch (Exception e) {
-			// TODO throw up some visual error message
+			System.out.println("could not login");
+//			makePopup();
+			showErrorPopup();
 		}
 	}
 
@@ -136,11 +138,18 @@ public class LoginGUI extends JFrame {
 		JFrame frame = new JFrame("Button Popup Sample");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		JButton start = new JButton("Pick Me for Popup");
-		frame.add(start);
+		JLabel message = new JLabel("Login did not work");
+		frame.add(message);
 
 		frame.setSize(350, 250);
 		frame.setVisible(true);
+	}
+	
+	public void showErrorPopup() {
+		Object[] options = {"OK"};
+		JOptionPane.showOptionDialog(this, "Login did not work. Please check your inputs.",
+				"Error", JOptionPane.ERROR_MESSAGE,
+				JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 	}
 
 	public void makeDialog() {
@@ -171,5 +180,16 @@ public class LoginGUI extends JFrame {
 		});
 
 	}
+	
+	// TESTING
+	public void testSetUsername(String u) {
+		username.setText(u);
+	}
+	
+	public void testLogin() {
+		System.out.println("test login");
+		login();
+	}
+	
 
 }

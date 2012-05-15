@@ -48,11 +48,9 @@ public class Client {
 		socket = new Socket(host, portNum);
 		// probably won't use this variable; everything happens inside of
 		// the thread
-		SendToServerConnection sender = new SendToServerConnection(socket,
-				queue, username);
+		SendToServerConnection sender = new SendToServerConnection(socket, queue, username);
 		sender.start();
-		ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(
-				socket, username);
+		ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(socket, username);
 		receiver.start();
 	}
 

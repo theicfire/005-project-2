@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.text.Document;
 
 import main.Client;
 import messages.RequestMessage;
@@ -26,9 +27,7 @@ import messages.TypingMessage;
 public class ConvoGUI extends JFrame implements KeyListener  {
 
 //	private JLabel friendIs;
-	private JLabel status; // TODO: update whether typing, idle, etc!!!
 	private JTextArea convo;
-	private JButton enter;
 	private JTextField newText;
 	private final static String newline = "\n";
 	private JScrollPane scrollPane;
@@ -43,19 +42,10 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 	public long lastKeyPress; 
 	
 	public ConvoGUI(String fromUsername, int roomID) {
+		this.setLocation((int) (Math.random() * 500), (int) (Math.random() * 500));
 		this.fromUsername = fromUsername;
 		this.baseTitle = "Room " + roomID;
 		this.roomID = roomID;
-		
-		enter = new JButton("Enter");
-		enter.setName("Enter");
-		enter.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				enterTextFromField();
-			}
-		});
 		
 		java.net.URL imageURL = LoginGUI.class.getResource("img/pugCslice.png");
 		ImageIcon pugPic = new ImageIcon(imageURL);
@@ -78,10 +68,9 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 		convo = new JTextArea();
 		convo.setName("Convo");
 		convo.setEditable(false);
+		convo.setLineWrap(true);
         scrollPane = new JScrollPane(convo);
 
-        status = new JLabel("Is Idle");  // TODO: update whether typing, idle, etc!!!
-        status.setName("Status");
         
         /*
         friendIs = new JLabel(" "+fromUsername+":");
@@ -132,6 +121,11 @@ public class ConvoGUI extends JFrame implements KeyListener  {
     		}
     	}).start();
     }
+	
+	public void scrollDown() {
+		Document d = convo.getDocument();
+		convo.select(d.getLength(), d.getLength());
+	}
 
 	public void setStatus(TypingMessage message) {
 		setTitle(baseTitle + message.toTitle());
@@ -161,6 +155,7 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 		convo.append(toAdd);
 		Client.getQueue().offer(new TextMessage(fromUsername, roomID, newText.getText()));
 		newText.setText("");
+		scrollDown();
 	}
 
 	public void handleTextMessage(TextMessage message) {
@@ -182,29 +177,21 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 		layout.setHorizontalGroup(layout
 				.createSequentialGroup()
 					.addGroup(layout.createParallelGroup()
-							//.addComponent(friendIs)
-							.addComponent(status)
 							.addComponent(pugLabel))
 					.addGroup(layout.createParallelGroup()
 								.addGroup(layout.createSequentialGroup().addComponent(scrollPane))
-								.addGroup(
-										layout.createSequentialGroup().addComponent(newText)
-										.addComponent(enter))));
+								.addComponent(newText)));
 
 		layout.setVerticalGroup(layout
 				.createParallelGroup()
 				.addGroup(layout.createSequentialGroup()
-						//.addComponent(friendIs)
-						.addComponent(status)
 						.addComponent(pugLabel))
 				.addGroup(layout.createSequentialGroup()
 							.addGroup(layout.createParallelGroup().addComponent(scrollPane))
-							.addGroup(
-									layout.createParallelGroup().addComponent(newText)
-									.addComponent(enter))));
+							.addComponent(newText)));
 
-		layout.linkSize(SwingConstants.HORIZONTAL, status, pugLabel);
-		layout.linkSize(SwingConstants.VERTICAL, newText, enter);
+		layout.linkSize(SwingConstants.HORIZONTAL, pugLabel);
+		layout.linkSize(SwingConstants.VERTICAL, newText);
 
 		setTitle(baseTitle);
 		pack();

@@ -208,7 +208,7 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 
 		setTitle(baseTitle);
 		pack();
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 	}
 

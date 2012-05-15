@@ -178,4 +178,8 @@ public class Client {
 	public static ConcurrentHashMap<Integer, ConvoGUI> getChats() {
 		return chats;
 	}
+
+	public static BuddyList getBuddyList() {
+		return buddyList;
+	}
 }

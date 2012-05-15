@@ -126,6 +126,9 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 
 	}
 
+	public List<String> getOnline(){
+		return online;
+	}
 	public void buddyLogin(String fromUsername) {
 		if (!online.contains(fromUsername)) {
 			listModel.addElement(fromUsername);

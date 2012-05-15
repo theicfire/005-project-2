@@ -142,14 +142,20 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 			return;
 		if(text.startsWith("/add ")){
 			String toUsername = text.substring(5);
-			Client.getQueue().offer(new RequestMessage(fromUsername, toUsername, roomID, RequestMessage.types.REQUEST));
-			newText.setText("");
 			
-			convo.append(fromUsername + ": I added " + toUsername + " to the chat!" + newline);
-			
-			//TODO - this is retarded
-			Client.getQueue().offer(new TextMessage(fromUsername, roomID, "I added " + toUsername + " to the chat!"));
-			return;
+			if(Client.getBuddyList().getOnline().contains(toUsername)){
+				Client.getQueue().offer(new RequestMessage(fromUsername, toUsername, roomID, RequestMessage.types.REQUEST));
+				newText.setText("");
+				
+				convo.append(fromUsername + ": I added " + toUsername + " to the chat!" + newline);
+				
+				//TODO - this is retarded
+				Client.getQueue().offer(new TextMessage(fromUsername, roomID, "I added " + toUsername + " to the chat!"));
+				return;
+			} else {
+				convo.append(fromUsername + ": " + toUsername + " is not online!" + newline);
+				return;
+			}
 		}
 		String toAdd = fromUsername + ": "+ text + newline;
 		convo.append(toAdd);

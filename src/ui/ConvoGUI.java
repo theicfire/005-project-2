@@ -79,8 +79,6 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 
 		setPreferredSize(new Dimension(450, 450));
 		createAndShowGUI();
-		System.out.println("done making convo gui");
-		
 	}
 	
 	@Override
@@ -159,7 +157,7 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 			this.setVisible(true);
 			otherText = true;
 		}
-		System.out.println(message.getFromUsername() + "|" + message.getText() + " just sent a message (enterText)");
+//		System.out.println(message.getFromUsername() + "|" + message.getText() + " just sent a message (enterText)");
 	}
 	
 	public void createAndShowGUI() {

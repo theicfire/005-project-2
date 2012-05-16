@@ -68,9 +68,6 @@ public class Server {
 		// needed because we are first getting something form messages and then editing that thing
 		synchronized(messages) {
 			ArrayBlockingQueue<Message> queue = messages.get(msg.getToUsername());
-			System.out.println(messages.keySet());
-			System.out.println(msg);
-			System.out.println(queue);
 			try {
 				queue.offer(msg);
 			} catch (Exception e) {
@@ -88,7 +85,6 @@ public class Server {
 				if(!msg.getFromUsername().equals(client)){
 					ArrayBlockingQueue<Message> queue = messages.get(client);
 					try {
-						System.out.println("Send message to: " + client);
 						queue.offer(msg);
 					} catch (Exception e) {
 						// queue is probably null

@@ -165,7 +165,6 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 	}
 
 	public void request(String toUsername) {
-		System.out.println("Chat request sent for: " + toUsername);
 		if (online.contains(toUsername)) { //only start convo if buddy logged in
 			//TODO - LOL SO JANKY
 			int randomInt = Math.abs(random.nextInt(999999));

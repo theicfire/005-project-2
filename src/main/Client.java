@@ -1,27 +1,16 @@
 package main;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import ui.BuddyList;
 import ui.ConvoGUI;
-import ui.DialogGUI;
 import ui.LoginGUI;
-
 import messages.*;
 import client.*;
-
 import client.ReceiveFromServerConnection;
 
 /**
@@ -35,14 +24,9 @@ public class Client {
 			1000);
 
 	public Client(String username, String host, String port) throws UnknownHostException, IOException { // TODO Bad for 005 yo!
-		// Make a login screen, which for now will just print it out, but will
-		// eventually call .login(String username)
-		// For now....
-
 		int portNum = Integer.parseInt(port);
-		
-		this.username = username;
 		Socket socket = new Socket(host, portNum);
+		this.username = username;
 		SendToServerConnection sender = new SendToServerConnection(socket, queue, username);
 		sender.start();
 		ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(socket, username);
@@ -70,41 +54,10 @@ public class Client {
 		}
 	}
 
-	/*
-	 * Handles Request messages by calling acceptRequest. If the request is
-	 * accepted, it loggedIn/loggedOut.
-	 */
-//	public static void handleRequestMessage(final RequestMessage message) {
-//		if (!chats.containsKey(message.getRoomID())){
-//			if (message.type == RequestMessage.types.REQUEST) {
-//				if (acceptRequest(message)) {
-//					// ArrayBlockingQueue<Message> queue = new
-//					// ArrayBlockingQueue<Message>(100);
-//					// Open up a new chat window!
-//					ConvoGUI convoGUI = new ConvoGUI(message.getToUsername(), message.getRoomID());
-//					chats.put(message.getRoomID(),convoGUI);
-////					convoGUI.setVisible(true); // will be set to true when other person talks first
-//				} else {
-//					// send the requester that you have rejected them
-//					// we are switching the order of from/to on purpose to send the message back
-//					Client.getQueue().offer(
-//							new RequestMessage(message.getToUsername(), message.getFromUsername(), message.getRoomID(),
-//									RequestMessage.types.REJECT_REQUEST));
-//				}
-//			} else {
-//				// you have requested someone to chat but they rejected you :(
-//				// TODO
-//				chats.get(message.getRoomID()).dispose();
-//			}
-//		}
-//	}
-
 	public static void handleAddToGroupMessage(AddToGroupMessage message) {
 		if (!chats.containsKey(message.getRoomID())){
-			System.out.println("making new convo gui");
 			ConvoGUI convoGUI = new ConvoGUI(message.getToUsername(), message.getRoomID());
 			chats.put(message.getRoomID(),convoGUI);
-//			convoGUI.setVisible(true);
 		} else {
 			System.out.println("This client already has the added room ID");
 		}
@@ -116,8 +69,6 @@ public class Client {
 	 */
 	public static void handleTextMessage(TextMessage message) throws Exception {
 		try {
-			System.out.println("looking for : " + message.getRoomID());
-			System.out.println("found: " + chats.get(message.getRoomID()));
 			if (chats.get(message.getRoomID()) != null) {
 				chats.get(message.getRoomID()).handleTextMessage(message);
 			} else {
@@ -139,8 +90,6 @@ public class Client {
 	 */
 	public static void handleTypingMessage(TypingMessage message) throws Exception {
 		try {
-			System.out.println("looking for : " + message.getFromUsername());
-			System.out.println("found: " + chats.get(message.getRoomID()));
 			chats.get(message.getRoomID()).setStatus(message);
 		} catch (NullPointerException e) {
 			throw new Exception(
@@ -148,29 +97,6 @@ public class Client {
 		}
 	}
 	
-	
-	
-
-	/*
-	 * Called by handleRequestMessage, when a user requests to start a chat, and
-	 * a REQUEST is sent to the client from the server. Opens up a popup window
-	 * seeing if they want to accept the chat?... Up do you, Sebastian - TODO
-	 * 
-	 * @returns true if the user wishes to accept the chat, and false otherwise.
-	 */
-//	public static boolean acceptRequest(RequestMessage message) {
-//		// This makes a popup dialog; disable for now
-//		if (true) {
-//			return true;
-//		}
-//		DialogGUI dialog = new DialogGUI();
-//		return dialog.makeDialog();
-//	}
-
-	/**
-	 * Start a GUI chat client.
-	 */
-
 	public static ArrayBlockingQueue<Message> getQueue() {
 		return queue;
 	}
@@ -180,7 +106,6 @@ public class Client {
 			public void run() {
 				LoginGUI main = new LoginGUI();
 				main.setVisible(true);
-//				new Client("thomas" + (int) (Math.random() * 100));
 			}
 		});
 	}

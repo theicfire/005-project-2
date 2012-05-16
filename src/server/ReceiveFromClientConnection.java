@@ -29,7 +29,6 @@ public class ReceiveFromClientConnection extends Thread {
 	private Socket gSocket;
 	private String username;
 	public ReceiveFromClientConnection(Socket socket) {
-		System.out.println("make new obj");
 		gSocket = socket;
 	}
 	public void run() {
@@ -40,9 +39,7 @@ public class ReceiveFromClientConnection extends Thread {
         } finally {
         	System.out.println("connection really closed");
             try {
-            	System.out.println("actually closing here");
 				gSocket.close();
-				
 				Server.disconnect(username);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -68,7 +65,6 @@ public class ReceiveFromClientConnection extends Thread {
         				out.println("DUPLICATE_LOGIN");
         			}
         		} else {
-	        		System.out.println("reading line" + line);
 	        		try {
 						handleRequest(line);
 					} catch (Exception e) {
@@ -77,7 +73,6 @@ public class ReceiveFromClientConnection extends Thread {
         		}
         	}
         } finally {     
-        	System.out.println("connection closed");
         	in.close();
         	out.close();
         }
@@ -123,10 +118,5 @@ public class ReceiveFromClientConnection extends Thread {
 				Server.sendMsgToClients(TypingMessage.parseStringMessage(input));
 			return;
 		}
-	}
-	
-	public static void main(String[] args) {
-		System.out.println("hello");
-//		handleRequest("REQUEST chase");
 	}
 }

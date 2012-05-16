@@ -24,7 +24,6 @@ public class SendToServerConnection extends Thread {
 	private boolean isKilled = false;
 	private String username;
 	public SendToServerConnection(Socket socket, ArrayBlockingQueue<Message> queue, String username) {
-		System.out.println("Making sendToServer obj");
 		gSocket = socket;
 		this.queue = queue;
 		this.username = username;
@@ -42,7 +41,6 @@ public class SendToServerConnection extends Thread {
         } finally {
         	System.out.println("SendToServerConnection closed");
             try {
-            	System.out.println("actually closing here");
 				gSocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();

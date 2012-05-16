@@ -23,7 +23,6 @@ public class SendToClientConnection extends Thread {
 	ArrayBlockingQueue<Message> queue;
 	private boolean isKilled = false;
 	public SendToClientConnection(Socket socket, ArrayBlockingQueue<Message> queue) {
-		System.out.println("Making sendToClient obj");
 		gSocket = socket;
 		this.queue = queue;
 	}
@@ -38,9 +37,8 @@ public class SendToClientConnection extends Thread {
         } catch (InterruptedException e) {
         	e.printStackTrace(); // but don't terminate serve()
         } finally {
-        	System.out.println("connection really closed");
+        	System.out.println("connection closed");
             try {
-            	System.out.println("actually closing here");
 				gSocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -61,11 +59,9 @@ public class SendToClientConnection extends Thread {
         		if (isKilled) {
         			break;
         		}
-        		
         		handleRequest(message, out);
         	}
         } finally {     
-        	System.out.println("send connection closed");
         	out.close();
         }
     }

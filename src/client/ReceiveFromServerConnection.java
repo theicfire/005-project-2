@@ -24,7 +24,6 @@ public class ReceiveFromServerConnection extends Thread {
 	public String username;
 	public ReceiveFromServerConnection(Socket socket, String username) {
 		this.username = username;
-		System.out.println("make new obj");
 		gSocket = socket;
 	}
 	public void run() {
@@ -38,7 +37,6 @@ public class ReceiveFromServerConnection extends Thread {
 		} finally {
         	System.out.println("ReceiveFromServerConnection closed");
             try {
-            	System.out.println("actually closing here");
 				gSocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -59,7 +57,6 @@ public class ReceiveFromServerConnection extends Thread {
         		handleRequest(line);
         	}
         } finally {     
-        	System.out.println("connection closed");
         	in.close();
         }
     }
@@ -73,7 +70,6 @@ public class ReceiveFromServerConnection extends Thread {
 	private void handleRequest(String input) throws Exception {
 		if (ConnectionMessage.isConnectionMessage(input)){
 			ConnectionMessage message = ConnectionMessage.parseStringMessage(input);
-			System.out.println(message.getStringMessage());
 			Client.handleConnectionMessage(message);
 		} else if (AddToGroupMessage.isAddToGroupMessage(input)){
 			AddToGroupMessage message =  AddToGroupMessage.parseStringMessage(input);
@@ -85,11 +81,9 @@ public class ReceiveFromServerConnection extends Thread {
 			TextMessage message =  TextMessage.parseStringMessage(input);
 			Client.handleTextMessage(message);
 		} else if (TypingMessage.isTypingMessage(input)){
-			System.out.println(input);
 			TypingMessage message =  TypingMessage.parseStringMessage(input);
 			Client.handleTypingMessage(message);
 		} else if (input.equals("DUPLICATE_LOGIN")) {
-			System.out.println("duplicate!!");
 		} else if (input.equals("GOOD_LOGIN")) {
 			// call login
 			Client.login(username);

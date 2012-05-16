@@ -186,16 +186,4 @@ public class LoginGUI extends JFrame {
 		});
 
 	}
-	
-	// TESTING
-	public void testSetUsername(String u) {
-		username.setText(u);
-	}
-	
-	public void testLogin() {
-		System.out.println("test login");
-		login();
-	}
-	
-
 }

@@ -46,7 +46,6 @@ public class ConnectionMessage  extends Message {
 		Matcher matcher = pattern.matcher(input);
 		if(matcher.matches()){
 			matcher.group();
-			System.out.println(matcher.group(1));
 			return new ConnectionMessage(matcher.group(2),
 										 Timestamp.valueOf(matcher.group(3)),
 										 matcher.group(1).equals("CONNECT") ? types.CONNECT : types.DISCONNECT);

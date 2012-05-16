@@ -25,10 +25,8 @@ public class NoticeMessage extends ToMessage {
 	public static NoticeMessage  parseStringMessage(String input) throws Exception {
 		Pattern pattern = Pattern.compile(patternStr);
 		Matcher matcher = pattern.matcher(input);
-		System.out.println("compare input" + input);
 		if(matcher.matches()){
 			matcher.group();
-			System.out.println("parse int of " + matcher.group(3));
 			return new NoticeMessage(matcher.group(1),
 									  matcher.group(2),
 									  Integer.parseInt(matcher.group(3)),
@@ -42,8 +40,6 @@ public class NoticeMessage extends ToMessage {
 	public static boolean isNoticeMessage(String input){
 		Pattern pattern = Pattern.compile(patternStr);
 		Matcher matcher = pattern.matcher(input);
-		System.out.println("check" + input + "----" + patternStr);
-		System.out.println("true/false: " + matcher.matches());
 		return matcher.matches();
 	}	
 	
@@ -61,7 +57,6 @@ public class NoticeMessage extends ToMessage {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		System.out.println("ehy");
 		NoticeMessage n = new NoticeMessage("from", "to", 222, "my notice");
 		System.out.println(NoticeMessage.parseStringMessage(n.getStringMessage()).getStringMessage());
 	}

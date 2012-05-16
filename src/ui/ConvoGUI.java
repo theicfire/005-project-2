@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -21,10 +23,11 @@ import javax.swing.text.Document;
 
 import main.Client;
 import messages.AddToGroupMessage;
+import messages.NoticeMessage;
 import messages.TextMessage;
 import messages.TypingMessage;
 
-public class ConvoGUI extends JFrame implements KeyListener  {
+public class ConvoGUI extends JFrame implements KeyListener, WindowListener  {
 
 //	private JLabel friendIs;
 	private JTextArea convo;
@@ -79,6 +82,7 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 
 		setPreferredSize(new Dimension(450, 450));
 		createAndShowGUI();
+		addWindowListener(this);
 	}
 	
 	@Override
@@ -189,7 +193,6 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 		setTitle(baseTitle);
 		pack();
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
 	}
 
 	public static void main(final String[] args) {
@@ -207,6 +210,36 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 	
 	public boolean hasOtherText() {
 		return otherText;
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		Client.getQueue().offer(new NoticeMessage(fromUsername, "none", roomID, "closing"));
+		System.out.println("window closing");
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
 	}
 
 }

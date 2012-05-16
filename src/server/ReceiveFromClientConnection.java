@@ -118,6 +118,12 @@ public class ReceiveFromClientConnection extends Thread {
 			if(Server.getChatRooms().containsKey(msg.getRoomID()))
 				Server.sendMsgToClients(TypingMessage.parseStringMessage(input));
 			return;
+		} else if (NoticeMessage.isNoticeMessage(input)) {
+			NoticeMessage msg = NoticeMessage.parseStringMessage(input);
+			if (msg.getNotice().equals("closing")) {
+				// tell the room this is closing
+				Server.sendMsgToClients(new NoticeMessage("server", msg.getFromUsername(), msg.getRoomID(), msg.getFromUsername() + " left the room"));
+			}
 		}
 	}
 }

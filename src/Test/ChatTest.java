@@ -84,6 +84,10 @@ public class ChatTest{
 			assertEquals(msg3.getFromUsername(), "tom");
 			assertEquals(msg3.getRoomID(), 22);
 			assertEquals(msg3.getText(), "hello chase");
+			
+			// third person connects
+			
+			// add the third person to chat
 	    }
 	    
 	    @Test

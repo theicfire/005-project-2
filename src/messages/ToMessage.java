@@ -23,7 +23,12 @@ public abstract class ToMessage extends Message {
 		this.toUsername = toUsername;
 	}
 	
-	//Deprecated - was used in RequestMessage. Helper function for getStringMessage().
+	@Deprecated
+	/**
+	 * Simply a helper function for getStringMessage().
+	 * Was used in RequestMessage, but no longer used for anything.
+	 * Kept just in case it might be helpful in the future.
+	 */
 	public String getStringMessageSuffix(){
 		return "|" + fromUsername + "|" + toUsername + "|" + roomID + "|" + timestamp.toString();
 	}

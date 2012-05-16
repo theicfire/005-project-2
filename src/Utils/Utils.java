@@ -15,6 +15,15 @@ public class Utils {
 		return new Timestamp(date.getTime());
 	}
 	
+	@Deprecated
+	/**
+	 * Helper function to parse a message from a string. Was eventually just 
+	 * essentially copy pasted into the code for Server/Client.
+	 * Kept just in case we want to do something with it in the future.
+	 * @param input
+	 * @return
+	 * @throws Exception
+	 */
 	public static Message parseStringMessage(String input) throws Exception{
 		if (ConnectionMessage.isConnectionMessage(input)){
 			return ConnectionMessage.parseStringMessage(input);
@@ -22,6 +31,8 @@ public class Utils {
 			return RequestMessage.parseStringMessage(input);
 		} else if (TextMessage.isTextMessage(input)){
 			return TextMessage.parseStringMessage(input);
+		} else if (TypingMessage.isTypingMessage(input)){
+			return TypingMessage.parseStringMessage(input);
 		}
 		throw new Exception ("Utils.parseStringMessage: Invalid Message");
 	}

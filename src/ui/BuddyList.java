@@ -10,7 +10,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import main.Client;
-import messages.RequestMessage;
+import messages.AddToGroupMessage;
 
 public class BuddyList extends JFrame implements ListSelectionListener,
 		ActionListener {
@@ -136,8 +136,7 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 			online.add(fromUsername);
 			return;
 		}
-		throw new RuntimeException(
-				"buddyLogin: Logged in user that was already logged in.");
+		throw new RuntimeException("buddyLogin: Logged in user that was already logged in.");
 	}
 
 	public void buddyLogout(String fromUsername) {
@@ -174,9 +173,7 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 			convoGUI.setVisible(true);
 
 			Client.getChats().put(randomInt, convoGUI);
-			Client.getQueue().offer(
-					new RequestMessage(username, toUsername, randomInt,
-							RequestMessage.types.REQUEST));
+			Client.getQueue().offer(new AddToGroupMessage(username, toUsername, randomInt));
 			// now send a request message to the other user
 		}
 	}

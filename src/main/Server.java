@@ -88,6 +88,7 @@ public class Server {
 				if(!msg.getFromUsername().equals(client)){
 					ArrayBlockingQueue<Message> queue = messages.get(client);
 					try {
+						System.out.println("Send message to: " + client);
 						queue.offer(msg);
 					} catch (Exception e) {
 						// queue is probably null

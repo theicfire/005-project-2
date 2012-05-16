@@ -42,12 +42,7 @@ public class Client {
 		int portNum = Integer.parseInt(port);
 		
 		this.username = username;
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		// prompt the user to enter their name
-		Socket socket;
-		socket = new Socket(host, portNum);
-		// probably won't use this variable; everything happens inside of
-		// the thread
+		Socket socket = new Socket(host, portNum);
 		SendToServerConnection sender = new SendToServerConnection(socket, queue, username);
 		sender.start();
 		ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(socket, username);
@@ -70,7 +65,6 @@ public class Client {
 			} else if (message.type == ConnectionMessage.types.DISCONNECT) {
 				buddyList.buddyLogout(message.getFromUsername());
 			}
-			updateOnline();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -80,31 +74,41 @@ public class Client {
 	 * Handles Request messages by calling acceptRequest. If the request is
 	 * accepted, it loggedIn/loggedOut.
 	 */
-	public static void handleRequestMessage(final RequestMessage message) {
+//	public static void handleRequestMessage(final RequestMessage message) {
+//		if (!chats.containsKey(message.getRoomID())){
+//			if (message.type == RequestMessage.types.REQUEST) {
+//				if (acceptRequest(message)) {
+//					// ArrayBlockingQueue<Message> queue = new
+//					// ArrayBlockingQueue<Message>(100);
+//					// Open up a new chat window!
+//					ConvoGUI convoGUI = new ConvoGUI(message.getToUsername(), message.getRoomID());
+//					chats.put(message.getRoomID(),convoGUI);
+////					convoGUI.setVisible(true); // will be set to true when other person talks first
+//				} else {
+//					// send the requester that you have rejected them
+//					// we are switching the order of from/to on purpose to send the message back
+//					Client.getQueue().offer(
+//							new RequestMessage(message.getToUsername(), message.getFromUsername(), message.getRoomID(),
+//									RequestMessage.types.REJECT_REQUEST));
+//				}
+//			} else {
+//				// you have requested someone to chat but they rejected you :(
+//				// TODO
+//				chats.get(message.getRoomID()).dispose();
+//			}
+//		}
+//	}
+
+	public static void handleAddToGroupMessage(AddToGroupMessage message) {
 		if (!chats.containsKey(message.getRoomID())){
-			if (message.type == RequestMessage.types.REQUEST) {
-				if (acceptRequest(message)) {
-					// ArrayBlockingQueue<Message> queue = new
-					// ArrayBlockingQueue<Message>(100);
-					// Open up a new chat window!
-					ConvoGUI convoGUI = new ConvoGUI(message.getToUsername(), message.getRoomID());
-					chats.put(message.getRoomID(),convoGUI);
-//					convoGUI.setVisible(true); // will be set to true when other person talks first
-				} else {
-					// send the requester that you have rejected them
-					// we are switching the order of from/to on purpose to send the message back
-					Client.getQueue().offer(
-							new RequestMessage(message.getToUsername(), message.getFromUsername(), message.getRoomID(),
-									RequestMessage.types.REJECT_REQUEST));
-				}
-			} else {
-				// you have requested someone to chat but they rejected you :(
-				// TODO
-				chats.get(message.getRoomID()).dispose();
-			}
+			System.out.println("making new convo gui");
+			ConvoGUI convoGUI = new ConvoGUI(message.getToUsername(), message.getRoomID());
+			chats.put(message.getRoomID(),convoGUI);
+//			convoGUI.setVisible(true);
+		} else {
+			System.out.println("This client already has the added room ID");
 		}
 	}
-
 	/*
 	 * Handles Text messages by forwarding them to the proper ArrayBlockingQueue
 	 * Throws an exception if you receive a message for which you do not
@@ -114,11 +118,20 @@ public class Client {
 		try {
 			System.out.println("looking for : " + message.getRoomID());
 			System.out.println("found: " + chats.get(message.getRoomID()));
-			chats.get(message.getRoomID()).handleTextMessage(message);
+			if (chats.get(message.getRoomID()) != null) {
+				chats.get(message.getRoomID()).handleTextMessage(message);
+			} else {
+				throw new RuntimeException("Received a text message but did not have the room for it");
+			}
+			
 		} catch (NullPointerException e) {
 			throw new Exception(
 					"handleTextMessage: message received from person not connected to");
 		}
+	}
+	
+	public static void handleNoticeMessage(NoticeMessage message) throws Exception {
+		handleTextMessage(new TextMessage(message.getFromUsername(), message.getRoomID(), message.getNotice()));
 	}
 	
 	/*
@@ -135,9 +148,8 @@ public class Client {
 		}
 	}
 	
-	private static void updateOnline() {
-		// TODO Auto-generated method stub
-	}
+	
+	
 
 	/*
 	 * Called by handleRequestMessage, when a user requests to start a chat, and
@@ -146,14 +158,14 @@ public class Client {
 	 * 
 	 * @returns true if the user wishes to accept the chat, and false otherwise.
 	 */
-	public static boolean acceptRequest(RequestMessage message) {
-		// This makes a popup dialog; disable for now
-		if (true) {
-			return true;
-		}
-		DialogGUI dialog = new DialogGUI();
-		return dialog.makeDialog();
-	}
+//	public static boolean acceptRequest(RequestMessage message) {
+//		// This makes a popup dialog; disable for now
+//		if (true) {
+//			return true;
+//		}
+//		DialogGUI dialog = new DialogGUI();
+//		return dialog.makeDialog();
+//	}
 
 	/**
 	 * Start a GUI chat client.
@@ -180,4 +192,6 @@ public class Client {
 	public static BuddyList getBuddyList() {
 		return buddyList;
 	}
+
+	
 }

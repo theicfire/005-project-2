@@ -74,9 +74,9 @@ public class SendToServerConnection extends Thread {
     }
 
 	/**
-	 * handler for client output
-	 * @param input
-	 * @return
+	 * Sends the information to the server
+	 * @param message what to send
+	 * @param out what to write to to send the message
 	 */
 	private static void handleRequest(Message message, PrintWriter out) {
 		out.println(message.getStringMessage());

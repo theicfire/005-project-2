@@ -15,14 +15,4 @@ public class Utils {
 		return new Timestamp(date.getTime());
 	}
 	
-	public static Message parseStringMessage(String input) throws Exception{
-		if (ConnectionMessage.isConnectionMessage(input)){
-			return ConnectionMessage.parseStringMessage(input);
-		} else if (RequestMessage.isRequestMessage(input)){
-			return RequestMessage.parseStringMessage(input);
-		} else if (TextMessage.isTextMessage(input)){
-			return TextMessage.parseStringMessage(input);
-		}
-		throw new Exception ("Utils.parseStringMessage: Invalid Message");
-	}
 }

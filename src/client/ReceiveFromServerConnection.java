@@ -53,16 +53,14 @@ public class ReceiveFromServerConnection extends Thread {
      */
     private void handleConnection(Socket socket) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         try {
         	for (String line = in.readLine(); line != null; line = in.readLine()) {
-        		System.out.println("ReceiveFromServer line input: " + line);
+        		System.out.println("ReceiveFromServer line input to " + username + ": " + line);
         		handleRequest(line);
         	}
         } finally {     
         	System.out.println("connection closed");
         	in.close();
-        	out.close();
         }
     }
 
@@ -77,9 +75,12 @@ public class ReceiveFromServerConnection extends Thread {
 			ConnectionMessage message = ConnectionMessage.parseStringMessage(input);
 			System.out.println(message.getStringMessage());
 			Client.handleConnectionMessage(message);
-		} else if (RequestMessage.isRequestMessage(input)){
-			RequestMessage message =  RequestMessage.parseStringMessage(input);
-			Client.handleRequestMessage(message);
+		} else if (AddToGroupMessage.isAddToGroupMessage(input)){
+			AddToGroupMessage message =  AddToGroupMessage.parseStringMessage(input);
+			Client.handleAddToGroupMessage(message);
+		} else if (NoticeMessage.isNoticeMessage(input)){
+			NoticeMessage message =  NoticeMessage.parseStringMessage(input);
+			Client.handleNoticeMessage(message);
 		} else if (TextMessage.isTextMessage(input)){
 			TextMessage message =  TextMessage.parseStringMessage(input);
 			Client.handleTextMessage(message);
@@ -92,11 +93,9 @@ public class ReceiveFromServerConnection extends Thread {
 		} else if (input.equals("GOOD_LOGIN")) {
 			// call login
 			Client.login(username);
+		} else {
+			throw new Exception("Could not parse the sent message: " + input);
 		}
 	}
 	
-	public static void main(String[] args) {
-		System.out.println("hello");
-//		handleRequest("REQUEST chase");
-	}
 }

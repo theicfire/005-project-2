@@ -20,7 +20,7 @@ import javax.swing.WindowConstants;
 import javax.swing.text.Document;
 
 import main.Client;
-import messages.RequestMessage;
+import messages.AddToGroupMessage;
 import messages.TextMessage;
 import messages.TypingMessage;
 
@@ -79,6 +79,7 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 
 		setPreferredSize(new Dimension(450, 450));
 		createAndShowGUI();
+		System.out.println("done making convo gui");
 		
 	}
 	
@@ -134,25 +135,20 @@ public class ConvoGUI extends JFrame implements KeyListener  {
 		String text = newText.getText();
 		if(text.equals(""))
 			return;
-		String toAdd;
 		if(text.startsWith("/add ")){
 			String toUsername = text.substring(5);
 			
 			if(Client.getBuddyList().getOnline().contains(toUsername)){
-				Client.getQueue().offer(new RequestMessage(fromUsername, toUsername, roomID, RequestMessage.types.REQUEST));
-				toAdd = fromUsername + ": I added " + toUsername + " to the chat!" + newline;
-
-				//TODO - this is retarded
-				Client.getQueue().offer(new TextMessage(fromUsername, roomID, "I added " + toUsername + " to the chat!"));
+				Client.getQueue().offer(new AddToGroupMessage(fromUsername, toUsername, roomID));
 			} else {
-				toAdd = fromUsername + ": " + toUsername + " is not online!" + newline;
+				convo.append(fromUsername + ": " + toUsername + " is not online!" + newline);
 			}
 		} else {
-			toAdd = fromUsername + ": "+ text + newline;
+			convo.append(fromUsername + ": "+ text + newline);
+			Client.getQueue().offer(new TextMessage(fromUsername, roomID, newText.getText()));
 		}
 		
-		convo.append(toAdd);
-		Client.getQueue().offer(new TextMessage(fromUsername, roomID, newText.getText()));
+		
 		newText.setText("");
 		scrollDown();
 	}

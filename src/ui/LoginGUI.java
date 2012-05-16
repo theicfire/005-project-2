@@ -122,9 +122,10 @@ public class LoginGUI extends JFrame {
 
 	private void login() {
 		String userInp = username.getText();
-		String firstLetter = userInp.substring(0, 1);
-		String end = userInp.substring(1);
-		String newUsername = firstLetter.toUpperCase()+end;
+//		String firstLetter = userInp.substring(0, 1);
+//		String end = userInp.substring(1);
+//		String newUsername = firstLetter.toUpperCase()+end;
+		String newUsername = userInp;
 		if (! VALID_USERNAME.matcher(newUsername).matches()) {
 			// bad login pattern
 			showErrorPopup("Please provide a username with only letters and numbers, between 3 and 12 characters.");

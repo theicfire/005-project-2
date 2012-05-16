@@ -56,8 +56,6 @@ public class SendToClientConnection extends Thread {
      */
     private void handleConnection(Socket socket) throws IOException, InterruptedException {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        out.println("Success! Start chatting.");
-        
         try {
         	for (Message message = queue.take(); message != null; message = queue.take()) {
         		if (isKilled) {

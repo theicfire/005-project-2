@@ -97,11 +97,18 @@ public class ReceiveFromClientConnection extends Thread {
 			else
 				System.out.println("Shouldn't reach here... textMessage, but no chatRoom");
 			return;
-		} else if (RequestMessage.isRequestMessage(input)) {
-			RequestMessage msg = RequestMessage.parseStringMessage(input);
+		} else if (AddToGroupMessage.isAddToGroupMessage(input)) {
+			AddToGroupMessage msg = AddToGroupMessage.parseStringMessage(input);
 			if(Server.getChatRooms().containsKey(msg.getRoomID())){
-				Server.getChatRooms().get(msg.getRoomID()).add(msg.getToUsername());
-				Server.sendMsgToClient(msg);
+				if (Server.getChatRooms().get(msg.getRoomID()).contains(msg.getToUsername())) {
+					// this person is already added
+					Server.sendMsgToClient(new NoticeMessage("server", msg.getFromUsername(), msg.getRoomID(), "Already added"));
+				} else {
+					Server.getChatRooms().get(msg.getRoomID()).add(msg.getToUsername());
+					Server.sendMsgToClient(msg);
+					Server.sendMsgToClients((new TextMessage("server", msg.getRoomID(), 
+							msg.getToUsername() + " has been added by " + msg.getFromUsername())));
+				}
 			} else {
 				ArrayList<String> clients = new ArrayList<String>();
 				clients.add(msg.getFromUsername());

@@ -11,7 +11,6 @@ import ui.ConvoGUI;
 import ui.LoginGUI;
 import messages.*;
 import client.*;
-import client.ReceiveFromServerConnection;
 
 /**
  * GUI chat client runner.
@@ -20,8 +19,7 @@ public class Client {
 	private static ConcurrentHashMap<Integer, ConvoGUI> chats = new ConcurrentHashMap<Integer, ConvoGUI>();
 	private String username;
 	private static BuddyList buddyList;
-	private static ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(
-			1000);
+	private static ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(1000);
 
 	public Client(String username, String host, String port) throws UnknownHostException, IOException { // TODO Bad for 005 yo!
 		int portNum = Integer.parseInt(port);
@@ -62,6 +60,7 @@ public class Client {
 			System.out.println("This client already has the added room ID");
 		}
 	}
+	
 	/*
 	 * Handles Text messages by forwarding them to the proper ArrayBlockingQueue
 	 * Throws an exception if you receive a message for which you do not

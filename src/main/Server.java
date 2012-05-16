@@ -72,7 +72,7 @@ public class Server {
 				queue.offer(msg);
 			} catch (Exception e) {
 				// queue is probably null
-				System.out.println("Client does not exist");
+				Server.println("Client does not exist");
 			}
 		}
 	}	
@@ -88,7 +88,7 @@ public class Server {
 						queue.offer(msg);
 					} catch (Exception e) {
 						// queue is probably null
-						System.out.println("Client does not exist");
+						Server.println("Client does not exist");
 					}
 				}
 			}
@@ -97,6 +97,7 @@ public class Server {
 	
 	// TODO; I don't think this should be in the server
 	public static boolean connect(String username, Socket socket) {
+		Server.println("Attempt to connect with" + username);
 		// make a message queue for this client
 		ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(MAX_CLIENTS);
 		// Needed, otherwise we may add multiple of the same username
@@ -106,9 +107,9 @@ public class Server {
 			}
 			messages.put(username, queue);
 		}
-		System.out.println("Connecting with username " + username);
+		Server.println("Connecting with username " + username);
 		// make a new thread to be able to send stuff to the client
-		SendToClientConnection thread = new SendToClientConnection(socket, queue);
+		SendToClientConnection thread = new SendToClientConnection(socket, queue, username);
 		thread.start();
 		sendThreadPool.put(username, thread);
 		
@@ -118,12 +119,13 @@ public class Server {
         		ConnectionMessage.types.CONNECT));
 	    
 	    giveAllConnections(username);
+	    Server.println("True; can connect with" + username);
 	    return true;
 	}
 	
 	// end threads and tell everyone that this user disconnected
 	public static void disconnect(String username) {
-		System.out.println("Disconnecting username: " + username);
+		Server.println("Disconnecting username: " + username);
 		messages.remove(username);
 		sendThreadPool.get(username).kill();
 		sendThreadPool.remove(username);
@@ -147,8 +149,9 @@ public class Server {
 	        Map.Entry<String, ArrayBlockingQueue<Message>> pair = 
 	        		(Map.Entry<String, ArrayBlockingQueue<Message>>)it.next();
 
-	        // tell this user ever username except it's own
+	        // tell this user every username except it's own
 	        if (! pair.getKey().equals(username)) {
+	        	Server.println("giveAllConnections to " + username + " with " + pair.getKey());
 	        	queue.offer(new ConnectionMessage(pair.getKey(), ConnectionMessage.types.CONNECT));
 	        }
 	    }
@@ -166,11 +169,12 @@ public class Server {
 
 	        // send the message to everyone except the sender
 	        if (! pair.getKey().equals(msg.getFromUsername())) {
+	        	Server.println("sendAll to " + pair.getKey() + " with " + msg);
 	        	pair.getValue().offer(msg);
 	        }
 	    }
 	}
-
+	
 	/**
 	 * Start a ChatServer running on the default port.
 	 */
@@ -179,7 +183,7 @@ public class Server {
 	}
 	
 	public static void runServer() {
-		System.out.println("Starting server at " + PORT);
+		Server.println("Starting server at " + PORT);
 		try {
 			Server server = new Server(PORT);
 			server.serve();
@@ -190,5 +194,9 @@ public class Server {
 
 	public static ConcurrentHashMap<Integer,ArrayList<String>> getChatRooms() {
 		return chatRooms;
+	}
+	
+	public static void println(String s) {
+		System.out.println("Server: " + s);
 	}
 }

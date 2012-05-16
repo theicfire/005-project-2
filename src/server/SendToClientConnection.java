@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import main.Server;
 import messages.Message;
 
 /**
@@ -22,9 +23,11 @@ public class SendToClientConnection extends Thread {
 	private Socket gSocket;
 	ArrayBlockingQueue<Message> queue;
 	private boolean isKilled = false;
-	public SendToClientConnection(Socket socket, ArrayBlockingQueue<Message> queue) {
+	private String username;
+	public SendToClientConnection(Socket socket, ArrayBlockingQueue<Message> queue, String username) {
 		gSocket = socket;
 		this.queue = queue;
+		this.username = username;
 	}
 	public void kill() {
 		isKilled = true;
@@ -37,7 +40,7 @@ public class SendToClientConnection extends Thread {
         } catch (InterruptedException e) {
         	e.printStackTrace(); // but don't terminate serve()
         } finally {
-        	System.out.println("connection closed");
+        	Server.println("connection closed");
             try {
 				gSocket.close();
 			} catch (IOException e) {
@@ -71,7 +74,8 @@ public class SendToClientConnection extends Thread {
 	 * @param input
 	 * @return
 	 */
-	private static void handleRequest(Message message, PrintWriter out) {
+	private void handleRequest(Message message, PrintWriter out) {
+		Server.println("Sending message to " + username + ": " + message.getStringMessage());
 		out.println(message.getStringMessage());
 	}
 }

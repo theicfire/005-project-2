@@ -37,7 +37,7 @@ public class ReceiveFromClientConnection extends Thread {
         } catch (IOException e) {
             e.printStackTrace(); // but don't terminate serve()
         } finally {
-        	System.out.println("connection really closed");
+        	Server.println("Server: connection really closed");
             try {
 				gSocket.close();
 				Server.disconnect(username);
@@ -57,6 +57,7 @@ public class ReceiveFromClientConnection extends Thread {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         try {
         	for (String line = in.readLine(); line != null; line = in.readLine()) {
+        		Server.println("Got message: " + line);
         		if (username == null) {
         			if (Server.connect(line, socket)) {
         				username = line;
@@ -90,7 +91,7 @@ public class ReceiveFromClientConnection extends Thread {
 			if(Server.getChatRooms().containsKey(msg.getRoomID()))
 				Server.sendMsgToClients(TextMessage.parseStringMessage(input));
 			else
-				System.out.println("Shouldn't reach here... textMessage, but no chatRoom");
+				Server.println("Shouldn't reach here... textMessage, but no chatRoom");
 			return;
 		} else if (AddToGroupMessage.isAddToGroupMessage(input)) {
 			AddToGroupMessage msg = AddToGroupMessage.parseStringMessage(input);

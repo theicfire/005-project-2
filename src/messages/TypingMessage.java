@@ -4,16 +4,16 @@ import java.sql.Timestamp;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A TypingMessage is a message that is sent whenever the typing status of a
+ * client in a chatroom changes. A TypingMessage can specify that the user is
+ * currently not doing anything, that the user is currently typing, or that the
+ * user has entered text. 
+ * 
+ * Extends the ToMessage class, only carrying the additional information of what
+ * type of TypingMessage it is (NOTHING/TYPING/ENETERED).
+ */
 public class TypingMessage extends ToMessage {
-	/**
-	 * A TypingMessage is a message that is sent whenever the typing status of a
-	 * client in a chatroom changes. A TypingMessage can specify that the user is
-	 * currently not doing anything, that the user is currently typing, or that the
-	 * user has entered text. 
-	 * 
-	 * Extends the ToMessage class, only carrying the additional information of what
-	 * type of TypingMessage it is (NOTHING/TYPING/ENETERED).
-	 */
 	public static String patternStr = "TYPING\\|(NOTHING|TYPING|ENTERED)\\|([^\\|]*)\\|([^\\|]*)\\|([^\\|]*)";
 	public static enum types {NOTHING,TYPING,ENTERED};
 	public TypingMessage.types type;

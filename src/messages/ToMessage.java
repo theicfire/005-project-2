@@ -2,6 +2,12 @@ package messages;
 
 import java.sql.Timestamp;
 
+/**
+ * A ToMessage is simply a Message that is sent from one user to another, or from one user to a room.
+ * This is compared to Messages, which are sent from the server to specific user (such as ConnectionMessages).
+ * 
+ * Extends Message, also keeping track of the toUsername and roomID
+ */
 public abstract class ToMessage extends Message {
 	public static String patternStr = ""; //TODO
 	protected String toUsername;
@@ -23,11 +29,8 @@ public abstract class ToMessage extends Message {
 		this.toUsername = toUsername;
 	}
 	
-	@Deprecated
 	/**
 	 * Simply a helper function for getStringMessage().
-	 * Was used in RequestMessage, but no longer used for anything.
-	 * Kept just in case it might be helpful in the future.
 	 */
 	public String getStringMessageSuffix(){
 		return "|" + fromUsername + "|" + toUsername + "|" + roomID + "|" + timestamp.toString();

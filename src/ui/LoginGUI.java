@@ -130,7 +130,7 @@ public class LoginGUI extends JFrame {
 			try {
 				new Client(newUsername, host.getText(), port.getText());
 			} catch (Exception e) {
-				showErrorPopup("Login did not work. Please check your inputs.");
+				showErrorPopup("Login did not work. Make sure you're connected to the internet.");
 			}
 		}
 	}

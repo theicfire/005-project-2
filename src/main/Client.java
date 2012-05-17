@@ -29,7 +29,7 @@ public class Client {
 		queue = new ArrayBlockingQueue<Message>(1000);
 		SendToServerConnection sender = new SendToServerConnection(socket, queue, username);
 		sender.start();
-		ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(socket, username);
+		ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(socket, username, loginGui);
 		receiver.start();
 	}
 

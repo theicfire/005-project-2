@@ -159,9 +159,7 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 			online.remove(index);
 			return;
 		}
-		throw new RuntimeException(
-				"buddyLogout: Logged out user that was already logged out.");
-
+		throw new RuntimeException("buddyLogout: Logged out user that was already logged out.");
 	}
 
 	public void request(String toUsername) {

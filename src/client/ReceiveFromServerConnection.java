@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
+import ui.LoginGUI;
 import main.Client;
 import main.Server;
 
@@ -22,9 +24,11 @@ public class ReceiveFromServerConnection extends Thread {
 
 	private Socket gSocket;
 	public String username;
-	public ReceiveFromServerConnection(Socket socket, String username) {
+	private LoginGUI loginGui;
+	public ReceiveFromServerConnection(Socket socket, String username, LoginGUI loginGui) {
 		this.username = username;
 		gSocket = socket;
+		this.loginGui = loginGui;
 	}
 	public void run() {
 		try {
@@ -36,6 +40,7 @@ public class ReceiveFromServerConnection extends Thread {
 			e.printStackTrace();
 		} finally {
         	System.out.println("ReceiveFromServerConnection closed");
+        	loginGui.showErrorPopup("Internet connection lost");
             try {
 				gSocket.close();
 			} catch (IOException e) {

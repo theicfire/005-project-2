@@ -4,14 +4,14 @@ import java.sql.Timestamp;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A ConnectionMessage is a message that is sent from the user to the server,
+ * and then propagated to other users in the room specified by roomID.
+ * 
+ * Extends the ToMessage class, only carrying the additional information of
+ * what text the message contains.
+ */
 public class TextMessage extends ToMessage {
-	/**
-	 * A ConnectionMessage is a message that is sent from the user to the server,
-	 * and then propagated to other users in the room specified by roomID.
-	 * 
-	 * Extends the ToMessage class, only carrying the additional information of
-	 * what text the message contains.
-	 */
 	
 	public static String patternStr = "MSG\\|([0-9a-zA-Z]+)\\|([0-9]+)\\|([^\\|]*)\\|(.+)";
 	private String text;
@@ -24,8 +24,7 @@ public class TextMessage extends ToMessage {
 			Timestamp timestamp, String text) {
 		super(fromUsername, "", roomID, timestamp);
 		this.text = text;
-	}
-	
+	}	
 	public TextMessage(String fromUsername, int roomID, String text) {
 		super(fromUsername, "", roomID);
 		this.text = text;

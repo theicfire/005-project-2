@@ -4,16 +4,16 @@ import java.sql.Timestamp;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A ConnectionMessage is a message that is sent from the server to all users
+ * whenever a user connects or disconnects. If the user connects, the type of
+ * the message is CONNECT. Similarly, if the user disconnects, the type of the
+ * message is DISCONNECT. 
+ * 
+ * Extends the Message class, only carrying the additional information of what
+ * type of ConnectionMessage it is (CONNECT/DISCONNECT).
+ */
 public class ConnectionMessage  extends Message {
-	/**
-	 * A ConnectionMessage is a message that is sent from the server to all users
-	 * whenever a user connects or disconnects. If the user connects, the type of
-	 * the message is CONNECT. Similarly, if the user disconnects, the type of the
-	 * message is DISCONNECT. 
-	 * 
-	 * Extends the Message class, only carrying the additional information of what
-	 * type of ConnectionMessage it is (CONNECT/DISCONNECT).
-	 */
 	public static String patternStr = "(CONNECT|DISCONNECT)\\|([^\\|]*)\\|([^\\|]*)";
 	public static enum types {CONNECT, DISCONNECT};
 	public ConnectionMessage.types type;
@@ -22,12 +22,12 @@ public class ConnectionMessage  extends Message {
 	 * Standard constructors.
 	 * Uses the Message constructors, but also keeps track of the type.
 	 */
-	public ConnectionMessage(String fromUsername, Timestamp timestamp, ConnectionMessage.types type) {
-		super(fromUsername, timestamp);
-		this.type = type;
-	}
 	public ConnectionMessage(String fromUsername, ConnectionMessage.types type) {
 		super(fromUsername);
+		this.type = type;
+	}
+	public ConnectionMessage(String fromUsername, Timestamp timestamp, ConnectionMessage.types type) {
+		super(fromUsername, timestamp);
 		this.type = type;
 	}
 	
@@ -71,8 +71,5 @@ public class ConnectionMessage  extends Message {
 				+ ", getTimestamp()=" + getTimestamp() + ", getClass()="
 				+ getClass() + ", hashCode()=" + hashCode() + ", toString()="
 				+ super.toString() + "]";
-	}
-	public static void main(String[] args) throws Exception{
-		
 	}
 }

@@ -27,7 +27,7 @@ import messages.*;
 public class ReceiveFromClientConnection extends Thread {
 
 	private Socket gSocket;
-	private String username;
+	private String username = null;
 	public ReceiveFromClientConnection(Socket socket) {
 		gSocket = socket;
 	}
@@ -55,9 +55,10 @@ public class ReceiveFromClientConnection extends Thread {
     private void handleConnection(Socket socket) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        
         try {
         	for (String line = in.readLine(); line != null; line = in.readLine()) {
-        		Server.println("Got message: " + line);
+        		Server.println("Got message: " + line + " current username is " + username);
         		if (username == null) {
         			if (Server.connect(line, socket)) {
         				username = line;

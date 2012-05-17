@@ -37,8 +37,7 @@ public class ChatTest{
 	    	assertTrue(true);
 	    }
 	    
-	    @Test
-	    public void testServer() throws Exception {
+	    public void nottestServer() throws Exception {
 	    	Thread server = new Thread(new Runnable() {
 	            public void run() {
 	            	Server.runServer();
@@ -70,6 +69,7 @@ public class ChatTest{
 
 			// get two messages on initial login
 			int roomID = 22;
+			
 			assertEquals(chaseReceiveQueue.take(), "GOOD_LOGIN");
 			ConnectionMessage msg = ConnectionMessage.parseStringMessage(chaseReceiveQueue.take()); // checks that this is a connectionMessage
 			assertEquals(msg.getFromUsername(), "tom");
@@ -88,7 +88,18 @@ public class ChatTest{
 			// third person connects
 			
 			// add the third person to chat
+			
+			// test talking
+			
+			// a person leaves
 	    }
+	    
+	    @Test
+	    public void testAddMessage() throws Exception {
+	    	AddToGroupMessage msg = new AddToGroupMessage("chase", "tom", 22);
+	    	assertEquals(msg.getStringMessage(), AddToGroupMessage.parseStringMessage(msg.getStringMessage()).getStringMessage());
+	    }
+	    
 	    
 	    @Test
 	    public void doLogin() throws InterruptedException {

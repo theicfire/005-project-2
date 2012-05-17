@@ -23,7 +23,6 @@ public abstract class ToMessage extends Message {
 		this.toUsername = toUsername;
 	}
 	
-	@Deprecated
 	/**
 	 * Simply a helper function for getStringMessage().
 	 * Was used in RequestMessage, but no longer used for anything.

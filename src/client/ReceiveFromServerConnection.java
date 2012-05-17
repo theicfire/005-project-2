@@ -84,11 +84,14 @@ public class ReceiveFromServerConnection extends Thread {
 			TypingMessage message =  TypingMessage.parseStringMessage(input);
 			Client.handleTypingMessage(message);
 		} else if (input.equals("DUPLICATE_LOGIN")) {
+			Client.loginGui.duplicateLogin();
 		} else if (input.equals("GOOD_LOGIN")) {
 			// call login
+			Client.loginGui.dispose();
 			Client.login(username);
 		} else {
-			throw new Exception("Could not parse the sent message: " + input);
+//			throw new Exception("Could not parse the sent message: " + input);
+			System.out.println("could not parse: " + input);
 		}
 	}
 	

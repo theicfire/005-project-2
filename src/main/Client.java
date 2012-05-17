@@ -19,12 +19,14 @@ public class Client {
 	private static ConcurrentHashMap<Integer, ConvoGUI> chats = new ConcurrentHashMap<Integer, ConvoGUI>();
 	private String username;
 	private static BuddyList buddyList;
-	private static ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(1000);
+	private static ArrayBlockingQueue<Message> queue;
+	public static LoginGUI loginGui;
 
-	public Client(String username, String host, String port) throws UnknownHostException, IOException { // TODO Bad for 005 yo!
+	public Client(String username, String host, String port) throws UnknownHostException, IOException {
 		int portNum = Integer.parseInt(port);
 		Socket socket = new Socket(host, portNum);
 		this.username = username;
+		queue = new ArrayBlockingQueue<Message>(1000);
 		SendToServerConnection sender = new SendToServerConnection(socket, queue, username);
 		sender.start();
 		ReceiveFromServerConnection receiver = new ReceiveFromServerConnection(socket, username);
@@ -40,6 +42,9 @@ public class Client {
 	 * Handles connection messages by calling loggedIn/loggedOut.
 	 */
 	public static void handleConnectionMessage(ConnectionMessage message) {
+		while (buddyList == null) {
+			// block until this happens
+		}
 		try {
 			if (message.type == ConnectionMessage.types.CONNECT) {
 				buddyList.buddyLogin(message.getFromUsername());
@@ -67,21 +72,18 @@ public class Client {
 	 * currently have a chat open.
 	 */
 	public static void handleTextMessage(TextMessage message) throws Exception {
-		try {
-			if (chats.get(message.getRoomID()) != null) {
-				chats.get(message.getRoomID()).handleTextMessage(message);
-			} else {
-				throw new RuntimeException("Received a text message but did not have the room for it");
-			}
-			
-		} catch (NullPointerException e) {
-			throw new Exception(
-					"handleTextMessage: message received from person not connected to");
+		handleTextMessage(message, false);
+	}
+	public static void handleTextMessage(TextMessage message, boolean notice) throws Exception {
+		if (chats.get(message.getRoomID()) != null) {
+			chats.get(message.getRoomID()).handleTextMessage(message, notice);
+		} else {
+			throw new RuntimeException("Received a text message but did not have the room for it");
 		}
 	}
 	
 	public static void handleNoticeMessage(NoticeMessage message) throws Exception {
-		handleTextMessage(new TextMessage(message.getFromUsername(), message.getRoomID(), message.getNotice()));
+		handleTextMessage(new TextMessage(message.getFromUsername(), message.getRoomID(), message.getNotice()), true);
 	}
 	
 	/*
@@ -91,8 +93,7 @@ public class Client {
 		try {
 			chats.get(message.getRoomID()).setStatus(message);
 		} catch (NullPointerException e) {
-			throw new Exception(
-					"handleTypingMessage: message received from person not connected to");
+			throw new Exception("handleTypingMessage: message received from person not connected to");
 		}
 	}
 	
@@ -103,8 +104,8 @@ public class Client {
 	public static void main(String[] args) throws IOException {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				LoginGUI main = new LoginGUI();
-				main.setVisible(true);
+				loginGui = new LoginGUI();
+				loginGui.setVisible(true);
 			}
 		});
 	}

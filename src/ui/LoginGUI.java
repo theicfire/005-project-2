@@ -129,11 +129,14 @@ public class LoginGUI extends JFrame {
 			System.out.println("loggging in with " + newUsername);
 			try {
 				new Client(newUsername, host.getText(), port.getText());
-				this.dispose();
 			} catch (Exception e) {
 				showErrorPopup("Login did not work. Please check your inputs.");
 			}
 		}
+	}
+	
+	public void duplicateLogin() {
+		showErrorPopup("Someone else already has this username.");
 	}
 
 	public static void makePopup() {

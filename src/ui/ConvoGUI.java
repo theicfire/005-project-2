@@ -156,8 +156,17 @@ public class ConvoGUI extends JFrame implements KeyListener, WindowListener  {
 	}
 	
 	public void handleTextMessage(TextMessage message) {
+		handleTextMessage(message, false);
+	}
+	
+	/**
+	 * 
+	 * @param message
+	 * @param notice if this is on, don't make your window visible just because of it
+	 */
+	public void handleTextMessage(TextMessage message, boolean notice) {
 		convo.append(message.getFromUsername() + ": " + message.getText() + newline);
-		if(!otherText) {
+		if(!otherText && !notice) {
 			this.setVisible(true);
 			otherText = true;
 		}

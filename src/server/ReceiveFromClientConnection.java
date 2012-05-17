@@ -35,7 +35,7 @@ public class ReceiveFromClientConnection extends Thread {
 		try {
 			handleConnection(gSocket);
         } catch (IOException e) {
-            e.printStackTrace(); // but don't terminate serve()
+        	// a person disconnected; this is fine
         } finally {
         	Server.println("Server: connection really closed");
             try {

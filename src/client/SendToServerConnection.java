@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import messages.Message;
+import messages.NoticeMessage;
 
 /**
  * Needs to both:
@@ -21,7 +22,6 @@ public class SendToServerConnection extends Thread {
 
 	private Socket gSocket;
 	ArrayBlockingQueue<Message> queue;
-	private boolean isKilled = false;
 	private String username;
 	public SendToServerConnection(Socket socket, ArrayBlockingQueue<Message> queue, String username) {
 		gSocket = socket;
@@ -29,7 +29,7 @@ public class SendToServerConnection extends Thread {
 		this.username = username;
 	}
 	public void kill() {
-		isKilled = true;
+		queue.offer(new NoticeMessage("kill", null, 0, null));
 	}
 	public void run() {
 		try {
@@ -59,10 +59,7 @@ public class SendToServerConnection extends Thread {
         try {
         	// initial login passing to server
         	out.println(username);
-        	for (Message message = queue.take(); message != null; message = queue.take()) {
-        		if (isKilled) {
-        			break;
-        		}
+        	for (Message message = queue.take(); message != null && !message.getFromUsername().equals("kill"); message = queue.take()) {
         		handleRequest(message, out);
         	}
         } finally {     

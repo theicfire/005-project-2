@@ -37,7 +37,8 @@ public class ChatTest{
 	    	assertTrue(true);
 	    }
 	    
-	    public void nottestServer() throws Exception {
+	    @Test
+	    public void testServer() throws Exception {
 	    	Thread server = new Thread(new Runnable() {
 	            public void run() {
 	            	Server.runServer();
@@ -86,12 +87,28 @@ public class ChatTest{
 			assertEquals(msg3.getText(), "hello chase");
 			
 			// third person connects
+			Socket socket3 = new Socket("localhost", 4444);
+	    	ArrayBlockingQueue<Message> sebSendQueue = new ArrayBlockingQueue<Message>(1000);
+			SendToServerConnection sender3 = new SendToServerConnection(socket3, sebSendQueue, "seb");
+			sender3.start();
 			
+			Thread.sleep(1000);
 			// add the third person to chat
+			tomSendQueue.offer(new AddToGroupMessage("tom", "seb", roomID));
 			
 			// test talking
+			tomSendQueue.offer(new TextMessage("tom", roomID, "hello chase and seb"));
 			
-			// a person leaves
+			ConnectionMessage msg4 = ConnectionMessage.parseStringMessage(chaseReceiveQueue.take());
+			assertEquals(msg4.getFromUsername(), "seb");
+			
+			TextMessage msg5 = TextMessage.parseStringMessage(chaseReceiveQueue.take());
+			assertEquals(msg5.getText(), "seb has been added by tom");
+			
+			TextMessage msg6 = TextMessage.parseStringMessage(chaseReceiveQueue.take());
+			assertEquals(msg6.getText(), "hello chase and seb");
+			
+
 	    }
 	    
 	    @Test

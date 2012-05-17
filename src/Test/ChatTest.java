@@ -47,8 +47,7 @@ public class ChatTest{
 					e.printStackTrace();
 				}
 	    	}
-	    	
-	    }
+	    }	    	
 	    
 	    @Test
 	    public void testNormalAndGroupChat() throws Exception {

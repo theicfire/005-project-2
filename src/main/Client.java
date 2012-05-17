@@ -13,7 +13,7 @@ import messages.*;
 import client.*;
 
 /**
- * GUI chat client runner.
+ * GUI chat client runner. This is where the magic happens!
  */
 public class Client {
 	private static ConcurrentHashMap<Integer, ConvoGUI> chats = new ConcurrentHashMap<Integer, ConvoGUI>();
@@ -22,6 +22,14 @@ public class Client {
 	private static ArrayBlockingQueue<Message> queue;
 	public static LoginGUI loginGui;
 
+	/**
+	 * Starts up the sending and receiving threads and setup the backbone of the client.
+	 * @param username
+	 * @param host
+	 * @param port
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	public Client(String username, String host, String port) throws UnknownHostException, IOException {
 		int portNum = Integer.parseInt(port);
 		Socket socket = new Socket(host, portNum);
@@ -34,8 +42,8 @@ public class Client {
 	}
 
 	/**
-	 * Makes a buddy list for the current user
-	 * @param username the username to log in
+	 * Logs in the user with the given name and opens up a buddyList.
+	 * @param username
 	 */
 	public static void login(String username) {
 		buddyList = new BuddyList(username);
@@ -75,7 +83,9 @@ public class Client {
 	}
 	
 	/**
-	 * Wrapper to have notice=false
+	 * Handles Text messages by forwarding them to the proper ArrayBlockingQueue
+	 * Throws an exception if you receive a message for which you do not
+	 * currently have a chat open.
 	 */
 	public static void handleTextMessage(TextMessage message) throws Exception {
 		handleTextMessage(message, false);
@@ -132,13 +142,15 @@ public class Client {
 		return chats;
 	}
 
-	/**
-	 * @return the budy list
-	 */
 	public static BuddyList getBuddyList() {
 		return buddyList;
 	}
 
+	/**
+	 * To start up a new client, you actually open up a LoginGUI first!
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

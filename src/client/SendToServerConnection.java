@@ -25,7 +25,6 @@ public class SendToServerConnection extends Thread {
 		this.queue = queue;
 		this.username = username;
 	}
-	
 	/**
 	 * Starts running a sending thread for the server - uses handleConnection to handle the connection.
 	 */

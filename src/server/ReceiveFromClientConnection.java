@@ -17,12 +17,8 @@ import main.Server;
 import messages.*;
 
 /**
- * Needs to both:
- * 	client, which sends messages to the server
- * 	server, which sends messages to the client
- * 	So two threads are needed?
+ * Listens to a single client for any messages and handles them appropriately
  * @author chase
- *
  */
 public class ReceiveFromClientConnection extends Thread {
 

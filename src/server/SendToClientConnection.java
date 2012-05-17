@@ -11,12 +11,8 @@ import main.Server;
 import messages.Message;
 
 /**
- * Needs to both:
- * 	client, which sends messages to the server
- * 	server, which sends messages to the client
- * 	So two threads are needed?
+ * One of these per client; used to send messages to the client
  * @author chase
- *
  */
 public class SendToClientConnection extends Thread {
 
@@ -70,7 +66,7 @@ public class SendToClientConnection extends Thread {
     }
 
 	/**
-	 * handler for client input
+	 * handler for sending messages input
 	 * @param input
 	 * @return
 	 */

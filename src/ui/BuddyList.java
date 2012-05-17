@@ -12,6 +12,9 @@ import javax.swing.event.*;
 import main.Client;
 import messages.AddToGroupMessage;
 
+/**
+ * Buddy list GUI 
+ */
 public class BuddyList extends JFrame implements ListSelectionListener,
 		ActionListener {
 	// http://docs.oracle.com/javase/tutorial/uiswing/examples/components/ListDemoProject/src/components/ListDemo.java
@@ -71,7 +74,7 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		request(partnerName.getText());
+		request(partnerName.getText().toLowerCase());
 	}
 
 	// This method is required by ListSelectionListener.

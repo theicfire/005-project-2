@@ -13,12 +13,10 @@ import main.Client;
 import messages.AddToGroupMessage;
 
 /**
- * Buddy list GUI 
+ * Buddy list GUI. This GUI is the main GUI from which you can interact with everything and start new
+ * {@link ConvoGUI}'s. 
  */
-public class BuddyList extends JFrame implements ListSelectionListener,
-		ActionListener {
-	// http://docs.oracle.com/javase/tutorial/uiswing/examples/components/ListDemoProject/src/components/ListDemo.java
-
+public class BuddyList extends JFrame implements ListSelectionListener,	ActionListener {
 	private JList list;
 	private DefaultListModel listModel;
 	private JLabel pugLabelA;
@@ -31,6 +29,10 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 
 	private static List<String> online = new ArrayList<String>();
 
+	/**
+	 * 
+	 * @param username
+	 */
 	public BuddyList(String username) {
 		this.setLocation((int) (Math.random() * 500), (int) (Math.random() * 500));
 		this.username = username;

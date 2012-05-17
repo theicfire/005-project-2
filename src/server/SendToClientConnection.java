@@ -20,14 +20,29 @@ public class SendToClientConnection extends Thread {
 	ArrayBlockingQueue<Message> queue;
 	private boolean isKilled = false;
 	private String username;
+	
+	/**
+	 * Create a new SendToClientConnection thread with the given parameters.
+	 * @param socket
+	 * @param queue
+	 * @param username
+	 */
 	public SendToClientConnection(Socket socket, ArrayBlockingQueue<Message> queue, String username) {
 		gSocket = socket;
 		this.queue = queue;
 		this.username = username;
 	}
+	
+	/**
+	 * Kills the thread.
+	 */
 	public void kill() {
 		isKilled = true;
 	}
+	
+	/**
+	 * Starts the thread.
+	 */
 	public void run() {
 		try {
 			handleConnection(gSocket);

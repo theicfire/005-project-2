@@ -13,7 +13,6 @@ import messages.NoticeMessage;
 /**
  * Waits on a blocking queue, whenever the queue adds a new message, this packages it up and sends it to the server
  * @author chase
- *
  */
 public class SendToServerConnection extends Thread {
 

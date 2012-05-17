@@ -13,8 +13,11 @@ import main.Client;
 import main.Server;
 import messages.AddToGroupMessage;
 import messages.ConnectionMessage;
+import messages.ConnectionMessage.types;
 import messages.Message;
+import messages.NoticeMessage;
 import messages.TextMessage;
+import messages.ToMessage;
 import messages.TypingMessage;
 
 import org.junit.Test;
@@ -27,10 +30,6 @@ import static org.junit.Assert.*;
 
 public class ChatTest{
 	    
-	    @Test(expected=AssertionError.class)
-	    public void testAssertionsEnabled() {
-	        assert false;
-	    }
 
 	    @Test
 	    public void testSomething() {
@@ -116,6 +115,63 @@ public class ChatTest{
 	    	AddToGroupMessage msg = new AddToGroupMessage("chase", "tom", 22);
 	    	assertEquals(msg.getStringMessage(), AddToGroupMessage.parseStringMessage(msg.getStringMessage()).getStringMessage());
 	    }
+	    
+	    @Test
+	    public void testAddMessage2() throws Exception {
+	    	AddToGroupMessage msg = new AddToGroupMessage("thomas", "sebastian", 142);
+	    	assertEquals(msg.getStringMessage(), AddToGroupMessage.parseStringMessage(msg.getStringMessage()).getStringMessage());
+	    }
+	    
+	    @Test
+	    public void testConnectionMessage() throws Exception {
+	    	ConnectionMessage msg = new ConnectionMessage("chase", types.CONNECT);
+	    	assertEquals(msg.getStringMessage(), ConnectionMessage.parseStringMessage(msg.getStringMessage()).getStringMessage());
+	    }
+	    
+	    @Test
+	    public void testConnectionMessage2() throws Exception {
+	    	ConnectionMessage msg = new ConnectionMessage("bob", types.DISCONNECT);
+	    	assertEquals(msg.getStringMessage(), ConnectionMessage.parseStringMessage(msg.getStringMessage()).getStringMessage());
+	    }
+
+	    
+	    @Test
+	    public void testNoticeMessage() throws Exception {
+	    	NoticeMessage msg = new NoticeMessage("chase", "sebastian", 55, "this person is here");
+	    	assertEquals(msg.getStringMessage(), NoticeMessage.parseStringMessage(msg.getStringMessage()).getStringMessage());
+	    }
+	    
+	    @Test
+	    public void testNoticeMessage2() throws Exception {
+	    	NoticeMessage msg = new NoticeMessage("craig", "mac", 232, "this person is never here");
+	    	assertEquals(msg.getStringMessage(), NoticeMessage.parseStringMessage(msg.getStringMessage()).getStringMessage());
+	    }
+	    
+	    @Test
+	    public void testTextMessage() throws Exception {
+	    	TextMessage msg = new TextMessage("sebastian", 55, "i am ridiculously cool");
+	    	assertEquals(msg.getStringMessage(), TextMessage.parseStringMessage(msg.getStringMessage()).getStringMessage());
+	    }
+	    
+	    @Test
+	    public void testTextMessage2() throws Exception {
+	    	TextMessage msg = new TextMessage("zoolander", 332, "i am ridiculously good looking");
+	    	assertEquals(msg.getStringMessage(), TextMessage.parseStringMessage(msg.getStringMessage()).getStringMessage());
+	    }
+
+	    @Test
+	    public void testTypingMessage() throws Exception {
+	    	TypingMessage msg = new TypingMessage("sebastian", 55, TypingMessage.types.NOTHING);
+	    	assertEquals(msg.getStringMessage(), TypingMessage.parseStringMessage(msg.getStringMessage()).getStringMessage());
+	    }
+	    
+	    @Test
+	    public void testTypingMessage2() throws Exception {
+	    	TypingMessage msg = new TypingMessage("fred", 2, TypingMessage.types.ENTERED);
+	    	assertEquals(msg.getStringMessage(), TypingMessage.parseStringMessage(msg.getStringMessage()).getStringMessage());
+	    }
+
+
 	    
 	    
 	    @Test

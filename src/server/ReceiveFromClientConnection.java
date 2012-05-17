@@ -63,6 +63,8 @@ public class ReceiveFromClientConnection extends Thread {
         			if (Server.connect(line, socket)) {
         				username = line;
         				out.println("GOOD_LOGIN");
+        				// stuff that needs to happen after GOOD_LOGIN is sent
+        				Server.finishConnect(line, socket);
         			} else {
         				out.println("DUPLICATE_LOGIN");
         			}

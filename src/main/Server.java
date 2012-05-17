@@ -107,12 +107,19 @@ public class Server {
 			}
 			messages.put(username, queue);
 		}
-		Server.println("Connecting with username " + username);
+		
 		// make a new thread to be able to send stuff to the client
 		SendToClientConnection thread = new SendToClientConnection(socket, queue, username);
 		thread.start();
 		sendThreadPool.put(username, thread);
 		
+		// continue on in finishConnect
+		
+	    return true;
+	}
+	
+	public static void finishConnect(String username, Socket socket) {
+		Server.println("Continuing to connect with username " + username);
 		
 		// tell everyone that this user has now connected
 	    sendAll(new ConnectionMessage(username, Utils.Utils.getCurrentTimestamp(), 
@@ -120,7 +127,6 @@ public class Server {
 	    
 	    giveAllConnections(username);
 	    Server.println("True; can connect with" + username);
-	    return true;
 	}
 	
 	// end threads and tell everyone that this user disconnected

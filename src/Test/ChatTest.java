@@ -28,6 +28,10 @@ import client.SendToServerConnection;
 import ui.LoginGUI;
 import static org.junit.Assert.*;
 
+/**
+ * This is the testing suit for the chat. It uses the {@link ArrayBlockingQueue}'s to send messages to/from
+ * the server and hooks into the GUI so that we can make sure the proper things happen.
+ */
 public class ChatTest{
 		public static boolean first = false;
 	    public ChatTest() {

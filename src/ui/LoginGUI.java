@@ -19,7 +19,7 @@ import javax.swing.SwingUtilities;
 import main.Client;
 
 /**
- * This is the gui first presented when Client startsgit .
+ * This is the gui first presented when Client starts. On a valid login, it starts up a new {@link Client}.
  */
 public class LoginGUI extends JFrame {
 

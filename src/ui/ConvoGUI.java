@@ -26,6 +26,10 @@ import messages.NoticeMessage;
 import messages.TextMessage;
 import messages.TypingMessage;
 
+/**
+ * Just contains a conversation. A HashMap of these is stored in the client, which calls 
+ * {@link setStatus} and {@link handleTextMessage} appropriately.
+ */
 public class ConvoGUI extends JFrame implements KeyListener, WindowListener  {
 
 //	private JLabel friendIs;

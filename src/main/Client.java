@@ -13,7 +13,9 @@ import messages.*;
 import client.*;
 
 /**
- * GUI chat client runner. This is where the magic happens!
+ * GUI chat client runner. This is where the magic happens! When you start a new Client, you actually first
+ * create a new {@link LoginGUI}, and then based off of the results of that, start up a new {@link BuddyList}
+ * and new {@link ReceiveFromServerConnection} and {@link SendToServerConnection} threads.
  */
 public class Client {
 	private static ConcurrentHashMap<Integer, ConvoGUI> chats = new ConcurrentHashMap<Integer, ConvoGUI>();

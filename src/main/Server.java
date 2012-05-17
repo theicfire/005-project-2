@@ -4,26 +4,21 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
-import messages.AddToGroupMessage;
-import messages.ConnectionMessage;
-import messages.Message;
-import messages.NoticeMessage;
-import messages.TextMessage;
-import messages.ToMessage;
-import messages.TypingMessage;
+import messages.*;
+
 import server.ReceiveFromClientConnection;
 import server.SendToClientConnection;
 
 /**
- * Chat server runner.
+ * Chat server runner. This is where the magic happens! When you start a new Client, you actually first
+ * create a new {@link LoginGUI}, and then based off of the results of that, start up a new {@link BuddyList}
+ * and new {@link ReceiveFromClientConnection} and {@link SendToClientConnection} threads.
  */
 public class Server {
 
@@ -246,14 +241,7 @@ public class Server {
 	        }
 	    }
 	}
-	
-	/**
-	 * Start a ChatServer running on the default port.
-	 */
-	public static void main(String[] args) {
-		runServer();
-	}
-	
+
 	public static void runServer() {
 		Server.println("Starting server at " + PORT);
 		try {
@@ -263,12 +251,27 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Just a getter for chatRooms
+	 * @return
+	 */
 	public static ConcurrentHashMap<Integer,ArrayList<String>> getChatRooms() {
 		return chatRooms;
 	}
 	
+	/**
+	 * Helper function for debugging and logging.
+	 * @param s
+	 */
 	public static void println(String s) {
 		System.out.println("Server: " + s);
+	}
+	
+	/**
+	 * Start a ChatServer running on the default port.
+	 */
+	public static void main(String[] args) {
+		runServer();
 	}
 }

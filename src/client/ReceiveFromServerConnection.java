@@ -13,12 +13,11 @@ import main.Server;
 import messages.*;
 
 /**
- * Needs to both:
- * 	client, which sends messages to the server
- * 	server, which sends messages to the client
- * 	So two threads are needed?
- * @author chase
- *
+ * {@link ReceiveFromServerConnection} and {@link ReceiveFromClientConnection} are both very similar in their nature.
+ * {@link ReceiveFromServerConnection} is initiated in {@link Client} and handles all of the message from the server. 
+ * The messages are read in by {@link handleConnection}, and forwarded to {@link handleRequest}. {@link HandleRequest} 
+ * in turn checks for which type of message it is and calls the corresponding message in {@link Client} (i.e. 
+ * {@link Client.handleConnectionMessage}). 
  */
 public class ReceiveFromServerConnection extends Thread {
 
@@ -99,5 +98,4 @@ public class ReceiveFromServerConnection extends Thread {
 			System.out.println("could not parse: " + input);
 		}
 	}
-	
 }

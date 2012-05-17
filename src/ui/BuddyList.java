@@ -165,10 +165,13 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 		throw new RuntimeException("buddyLogout: Logged out user that was already logged out.");
 	}
 
+	/**
+	 * makes a new room
+	 * @param toUsername
+	 */
 	public void request(String toUsername) {
 		if (online.contains(toUsername)) { //only start convo if buddy logged in
-			//TODO - LOL SO JANKY
-			int randomInt = Math.abs(random.nextInt(999999));
+			int randomInt = Math.abs(random.nextInt((int) 1e20));
 			ConvoGUI convoGUI = new ConvoGUI(username, randomInt);
 			convoGUI.setVisible(true);
 
@@ -198,7 +201,6 @@ public class BuddyList extends JFrame implements ListSelectionListener,
 					buddyList.buddyLogout("theicfire2");
 					buddyList.buddyLogin("theicfire3");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

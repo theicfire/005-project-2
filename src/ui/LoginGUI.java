@@ -19,7 +19,7 @@ import javax.swing.SwingUtilities;
 import main.Client;
 
 /**
- * This is the GUI that plays Jotto.
+ * This is the gui first presented when Client starts.
  */
 public class LoginGUI extends JFrame {
 

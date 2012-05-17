@@ -10,7 +10,6 @@ import java.awt.event.WindowListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -231,6 +230,7 @@ public class ConvoGUI extends JFrame implements KeyListener, WindowListener  {
 
 	@Override
 	public void windowClosing(WindowEvent e) {
+		// tell others that you have left the chat
 		Client.getQueue().offer(new NoticeMessage(fromUsername, "none", roomID, "closing"));
 		System.out.println("window closing");
 	}

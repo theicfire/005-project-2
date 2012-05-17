@@ -100,6 +100,13 @@ public class Client {
 	public static ArrayBlockingQueue<Message> getQueue() {
 		return queue;
 	}
+	public static ConcurrentHashMap<Integer, ConvoGUI> getChats() {
+		return chats;
+	}
+
+	public static BuddyList getBuddyList() {
+		return buddyList;
+	}
 
 	public static void main(String[] args) throws IOException {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -109,14 +116,4 @@ public class Client {
 			}
 		});
 	}
-
-	public static ConcurrentHashMap<Integer, ConvoGUI> getChats() {
-		return chats;
-	}
-
-	public static BuddyList getBuddyList() {
-		return buddyList;
-	}
-
-	
 }

@@ -3,12 +3,10 @@ package client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 import ui.LoginGUI;
 import main.Client;
-import main.Server;
 
 import messages.*;
 
@@ -20,15 +18,27 @@ import messages.*;
  * {@link Client.handleConnectionMessage}). 
  */
 public class ReceiveFromServerConnection extends Thread {
-
 	private Socket gSocket;
 	public String username;
 	private LoginGUI loginGui;
+	
+	/**
+	 * Constructor called when Client is made.
+	 * @param socket   - the socket to use
+	 * @param username - the client's username
+	 * @param loginGui - the loginGUI
+	 */
 	public ReceiveFromServerConnection(Socket socket, String username, LoginGUI loginGui) {
 		this.username = username;
 		gSocket = socket;
 		this.loginGui = loginGui;
 	}
+	
+	/**
+	 * Starts running this thread. Handles the connection by having handleConnection forward the messages to handleRequest
+	 * which in turn detects what type of message they are and forwards them to the Client. If the client disconnects, 
+	 * this method will simply return.
+	 */
 	public void run() {
 		try {
 			handleConnection(gSocket);
@@ -49,7 +59,7 @@ public class ReceiveFromServerConnection extends Thread {
 	}
 	
     /**
-     * Handle a single client connection.  Returns when client disconnects.
+     * Handle a single client connection, calling handleRequest for each line read in. Returns when client disconnects.
      * @param socket  socket where client is connected
      * @throws Exception 
      */

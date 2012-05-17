@@ -125,7 +125,6 @@ public class Client {
 	public static ArrayBlockingQueue<Message> getQueue() {
 		return queue;
 	}
-
 	/**
 	 * @return the convoGUI chats that this client has open
 	 */
@@ -147,5 +146,5 @@ public class Client {
 				loginGui.setVisible(true);
 			}
 		});
-	}	
+	}
 }

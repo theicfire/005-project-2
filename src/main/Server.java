@@ -12,9 +12,13 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
+import messages.AddToGroupMessage;
 import messages.ConnectionMessage;
 import messages.Message;
+import messages.NoticeMessage;
+import messages.TextMessage;
 import messages.ToMessage;
+import messages.TypingMessage;
 import server.ReceiveFromClientConnection;
 import server.SendToClientConnection;
 
@@ -153,6 +157,54 @@ public class Server {
 		// tell everyone that this user has disconnected
 	    sendAll(new ConnectionMessage(username, Utils.Utils.getCurrentTimestamp(), 
         		ConnectionMessage.types.DISCONNECT));
+	}
+	
+	public static void handleTextMessage(TextMessage message) throws Exception {
+		if(chatRooms.containsKey(message.getRoomID()))
+			sendMsgToClients(message);
+		else
+			println("Shouldn't reach here... TextMessage, but no chatRoom");
+	}
+	
+	public static void handleAddToGroupMessage(AddToGroupMessage message) throws Exception {
+		int roomID = message.getRoomID();
+		String toUsername = message.getToUsername();
+		String fromUsername = message.getFromUsername();
+		
+		if(chatRooms.containsKey(roomID)){
+			if (chatRooms.get(roomID).contains(toUsername)) {
+				// This person is already added
+				sendMsgToClient(new NoticeMessage("server", fromUsername, roomID, "Already added"));
+			} else {
+				chatRooms.get(roomID).add(toUsername);
+				sendMsgToClient(message);
+				sendMsgToClients((new TextMessage("server", roomID, toUsername + " has been added by " + fromUsername)));
+			}
+		} else {
+			ArrayList<String> clients = new ArrayList<String>();
+			clients.add(fromUsername);
+			clients.add(toUsername);
+			chatRooms.put(roomID, clients);
+			sendMsgToClient(message);
+		}
+	}
+	
+	/*
+	 * TODO - write shit
+	 */
+	public static void handleTypingMessage(TypingMessage message) throws Exception {
+		if(chatRooms.containsKey(message.getRoomID()))
+			sendMsgToClients(message);
+		else
+			println("Shouldn't reach here... TypingMessage, but no chatRoom");
+	}
+
+	public static void handleNoticeMessage(NoticeMessage message) throws Exception {
+		if (message.getNotice().equals("closing")) {
+			// tell the room this is closing
+			sendMsgToClients(new NoticeMessage("server", message.getFromUsername(), message.getRoomID(), 
+																message.getFromUsername() + " left the room"));
+		}
 	}
 	
 	/**

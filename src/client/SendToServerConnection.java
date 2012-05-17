@@ -26,10 +26,9 @@ public class SendToServerConnection extends Thread {
 		this.username = username;
 	}
 	
-	public void kill() {
-		queue.offer(new NoticeMessage("kill", null, 0, null));
-	}
-	
+	/**
+	 * Starts running a sending thread for the server - uses handleConnection to handle the connection.
+	 */
 	public void run() {
 		try {
 			handleConnection(gSocket);
@@ -45,6 +44,13 @@ public class SendToServerConnection extends Thread {
 				e.printStackTrace();
 			}
         }
+	}
+	
+	/**
+	 * Disconnects the user from the server, sending a notification... ?
+	 */
+	public void kill() {
+		queue.offer(new NoticeMessage("kill", null, 0, null));
 	}
 	
     /**

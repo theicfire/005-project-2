@@ -11,10 +11,7 @@ import messages.Message;
 import messages.NoticeMessage;
 
 /**
- * Needs to both:
- * 	client, which sends messages to the server
- * 	server, which sends messages to the client
- * 	So two threads are needed?
+ * Waits on a blocking queue, whenever the queue adds a new message, this packages it up and sends it to the server
  * @author chase
  *
  */
@@ -28,9 +25,11 @@ public class SendToServerConnection extends Thread {
 		this.queue = queue;
 		this.username = username;
 	}
+	
 	public void kill() {
 		queue.offer(new NoticeMessage("kill", null, 0, null));
 	}
+	
 	public void run() {
 		try {
 			handleConnection(gSocket);
@@ -49,7 +48,7 @@ public class SendToServerConnection extends Thread {
 	}
 	
     /**
-     * Handle a single client connection.  Returns when client disconnects.
+     * Waits for messages from a queue and sends the packaged message to the server 
      * @param socket  socket where client is connected
      * @throws IOException if connection has an error or terminates unexpectedly
      * @throws InterruptedException 
@@ -60,20 +59,11 @@ public class SendToServerConnection extends Thread {
         	// initial login passing to server
         	out.println(username);
         	for (Message message = queue.take(); message != null && !message.getFromUsername().equals("kill"); message = queue.take()) {
-        		handleRequest(message, out);
+        		out.println(message.getStringMessage());
         	}
         } finally {     
         	System.out.println("send connection closed");
         	out.close();
         }
     }
-
-	/**
-	 * Sends the information to the server
-	 * @param message what to send
-	 * @param out what to write to to send the message
-	 */
-	private static void handleRequest(Message message, PrintWriter out) {
-		out.println(message.getStringMessage());
-	}
 }

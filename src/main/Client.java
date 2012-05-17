@@ -33,12 +33,16 @@ public class Client {
 		receiver.start();
 	}
 
+	/**
+	 * Makes a buddy list for the current user
+	 * @param username the username to log in
+	 */
 	public static void login(String username) {
 		buddyList = new BuddyList(username);
 		buddyList.setVisible(true);
 	}
 
-	/*
+	/**
 	 * Handles connection messages by calling loggedIn/loggedOut.
 	 */
 	public static void handleConnectionMessage(ConnectionMessage message) {
@@ -57,6 +61,10 @@ public class Client {
 		}
 	}
 
+	/**
+	 * Handles AddToGroup messages by making new convoGUI's, where appropriate
+	 * @param message
+	 */
 	public static void handleAddToGroupMessage(AddToGroupMessage message) {
 		if (!chats.containsKey(message.getRoomID())){
 			ConvoGUI convoGUI = new ConvoGUI(message.getToUsername(), message.getRoomID());
@@ -66,14 +74,21 @@ public class Client {
 		}
 	}
 	
-	/*
-	 * Handles Text messages by forwarding them to the proper ArrayBlockingQueue
-	 * Throws an exception if you receive a message for which you do not
-	 * currently have a chat open.
+	/**
+	 * Wrapper to have notice=false
 	 */
 	public static void handleTextMessage(TextMessage message) throws Exception {
 		handleTextMessage(message, false);
 	}
+	
+	/**
+	 * Handles Text messages by forwarding them to the proper ArrayBlockingQueue
+	 * Throws an exception if you receive a message for which you do not
+	 * currently have a chat open.
+	 * @param message The message being sent
+	 * @param notice If this is a notice from the server or a message from a user
+	 * @throws Exception
+	 */
 	public static void handleTextMessage(TextMessage message, boolean notice) throws Exception {
 		if (chats.get(message.getRoomID()) != null) {
 			chats.get(message.getRoomID()).handleTextMessage(message, notice);
@@ -82,12 +97,19 @@ public class Client {
 		}
 	}
 	
+	/**
+	 * Handles notices that the server sends to be displayed
+	 * @param message
+	 * @throws Exception
+	 */
 	public static void handleNoticeMessage(NoticeMessage message) throws Exception {
 		handleTextMessage(new TextMessage(message.getFromUsername(), message.getRoomID(), message.getNotice()), true);
 	}
 	
-	/*
-	 * TODO - write shit
+	/**
+	 * Handles messages that are sent to update typing status (typing status is in the title bar)
+	 * @param message The typing message
+	 * @throws Exception
 	 */
 	public static void handleTypingMessage(TypingMessage message) throws Exception {
 		try {
@@ -97,8 +119,25 @@ public class Client {
 		}
 	}
 	
+	/**
+	 * @return the queue that is used to send messages to the server via SendToServerConnection
+	 */
 	public static ArrayBlockingQueue<Message> getQueue() {
 		return queue;
+	}
+
+	/**
+	 * @return the convoGUI chats that this client has open
+	 */
+	public static ConcurrentHashMap<Integer, ConvoGUI> getChats() {
+		return chats;
+	}
+
+	/**
+	 * @return the budy list
+	 */
+	public static BuddyList getBuddyList() {
+		return buddyList;
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -108,15 +147,5 @@ public class Client {
 				loginGui.setVisible(true);
 			}
 		});
-	}
-
-	public static ConcurrentHashMap<Integer, ConvoGUI> getChats() {
-		return chats;
-	}
-
-	public static BuddyList getBuddyList() {
-		return buddyList;
-	}
-
-	
+	}	
 }

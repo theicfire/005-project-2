@@ -26,7 +26,26 @@ import ui.LoginGUI;
 import static org.junit.Assert.*;
 
 public class ChatTest{
-	    
+		public static boolean first = false;
+	    public ChatTest() {
+	    	System.out.println("first is " + first);
+	    	if (!first) {
+	    		first = true;
+	    		Thread server = new Thread(new Runnable() {
+		            public void run() {
+		            	Server.runServer();
+		            }
+		    	});
+		    	server.start();
+		    	try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    	}
+	    	
+	    }
 	    @Test(expected=AssertionError.class)
 	    public void testAssertionsEnabled() {
 	        assert false;
@@ -39,16 +58,6 @@ public class ChatTest{
 	    
 	    @Test
 	    public void testServer() throws Exception {
-	    	Thread server = new Thread(new Runnable() {
-	            public void run() {
-	            	Server.runServer();
-	            }
-	    	});
-	    	server.start();
-	    	
-	    	// allow server to start before clients connect
-	    	Thread.sleep(1000);
-	    	
 	    	// first client sender
 	    	Socket socket = new Socket("localhost", 4444);
 	    	ArrayBlockingQueue<Message> chaseSendQueue = new ArrayBlockingQueue<Message>(1000);
@@ -107,8 +116,35 @@ public class ChatTest{
 			
 			TextMessage msg6 = TextMessage.parseStringMessage(chaseReceiveQueue.take());
 			assertEquals(msg6.getText(), "hello chase and seb");
+	    }
+	    
+	    @Test
+	    public void testDuplicate() throws Exception {
+	    	
+	    	// first client sender
+	    	Socket socket = new Socket("localhost", 4444);
+	    	ArrayBlockingQueue<Message> chaseSendQueue = new ArrayBlockingQueue<Message>(1000);
+			SendToServerConnection sender = new SendToServerConnection(socket, chaseSendQueue, "chase");
+			sender.start();
 			
+			// allow first client to connect
+			Thread.sleep(1000);
+			// second client sender
+			Socket socket2 = new Socket("localhost", 4444);
+	    	ArrayBlockingQueue<Message> tomSendQueue = new ArrayBlockingQueue<Message>(1000);
+			SendToServerConnection sender2 = new SendToServerConnection(socket2, tomSendQueue, "chase");
+			sender2.start();
+			
+			// second client receiver
+			ArrayBlockingQueue<String> chaseReceiveQueue = new ArrayBlockingQueue<String>(1000);
+			TestReceiveFromServerConnection receiver = new TestReceiveFromServerConnection(socket2, "chase", chaseReceiveQueue);
+			receiver.start();
 
+			// get two messages on initial login
+			int roomID = 22;
+			
+			assertEquals(chaseReceiveQueue.take(), "DUPLICATE_LOGIN");
+			
 	    }
 	    
 	    @Test

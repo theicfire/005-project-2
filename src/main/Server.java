@@ -26,7 +26,6 @@ public class Server {
 	private final static int PORT = 4444;
 	private final ServerSocket serverSocket;
 	
-	// TODO think about what static is going to be doing
 	private static ConcurrentHashMap<String, ArrayBlockingQueue<Message>> messages
 		= new ConcurrentHashMap<String, ArrayBlockingQueue<Message>>();
 	private static ConcurrentHashMap<String, SendToClientConnection> sendThreadPool;
@@ -35,8 +34,7 @@ public class Server {
 	private final static int MAX_CLIENTS = 1000;
 	
 	/**
-	 * @param port
-	 *            port number, requires 0 <= port <= 65535.
+	 * @param port port number, requires 0 <= port <= 65535.
 	 */
 	public Server(int port) throws IOException {
 		serverSocket = new ServerSocket(port);
@@ -56,14 +54,16 @@ public class Server {
 			// block until a client connects
 			Socket socket = serverSocket.accept();
 
-			// handle the client
 			// open up the receiving thread
 			Thread thread = new ReceiveFromClientConnection(socket);
 			thread.start();
 		}
 	}
-	
-	// TODO; I don't think this should be in the server
+
+	/**
+	 * Sends a message to the client specified in the message
+	 * @param msg the message to send
+	 */
 	public static void sendMsgToClient(ToMessage msg) {
 		// needed because we are first getting something form messages and then editing that thing
 		synchronized(messages) {
@@ -77,7 +77,11 @@ public class Server {
 		}
 	}	
 	
-	// TODO; I don't think this should be in the server
+
+	/**
+	 * Sends a message to all the clients in the group specified by the message
+	 * @param msg the message to send
+	 */
 	public static void sendMsgToClients(ToMessage msg) {
 		synchronized(messages) {
 			ArrayList<String> clients = chatRooms.get(msg.getRoomID());
@@ -94,12 +98,17 @@ public class Server {
 			}
 		}
 	}
-	
-	// TODO; I don't think this should be in the server
+
+	/**
+	 * Changes server state to have a new client
+	 * @param username
+	 * @param socket
+	 * @return
+	 */
 	public static boolean connect(String username, Socket socket) {
 		Server.println("Attempt to connect with" + username);
 		// make a message queue for this client
-		ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(MAX_CLIENTS);
+		ArrayBlockingQueue<Message> queue = new ArrayBlockingQueue<Message>(1000);
 		// Needed, otherwise we may add multiple of the same username
 		synchronized(messages) {
 			if (messages.containsKey(username)) {
@@ -118,6 +127,11 @@ public class Server {
 	    return true;
 	}
 	
+	/**
+	 * Finishes up changing server state for new clients; different from connect because the user must receive a message before more messages are sent.
+	 * @param username
+	 * @param socket
+	 */
 	public static void finishConnect(String username, Socket socket) {
 		Server.println("Continuing to connect with username " + username);
 		

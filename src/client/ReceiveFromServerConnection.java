@@ -13,12 +13,8 @@ import main.Server;
 import messages.*;
 
 /**
- * Needs to both:
- * 	client, which sends messages to the server
- * 	server, which sends messages to the client
- * 	So two threads are needed?
+ * Waits for messages from the server and executes appropriately
  * @author chase
- *
  */
 public class ReceiveFromServerConnection extends Thread {
 
@@ -67,9 +63,8 @@ public class ReceiveFromServerConnection extends Thread {
     }
 
 	/**
-	 * handler for client input
-	 * @param input
-	 * @return
+	 * Decides what to do with the server input; changes the gui and Client state
+	 * @param input the input received from the server
 	 * @throws Exception 
 	 */
 	private void handleRequest(String input) throws Exception {
@@ -95,7 +90,6 @@ public class ReceiveFromServerConnection extends Thread {
 			Client.loginGui.dispose();
 			Client.login(username);
 		} else {
-//			throw new Exception("Could not parse the sent message: " + input);
 			System.out.println("could not parse: " + input);
 		}
 	}
